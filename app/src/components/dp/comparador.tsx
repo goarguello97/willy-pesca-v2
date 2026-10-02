@@ -20,7 +20,7 @@ export function Comparador() {
           Comparador
         </h2>
         <p className="mt-4 max-w-[58ch] text-lg leading-relaxed text-gris">
-          Todos los equipos con su ficha, lado a lado. Fotos reales; precio y stock por WhatsApp
+          Todos los equipos con su ficha, lado a lado. Fotos reales; precio y stock por WhatsApp.
         </p>
 
         <div role="tablist" aria-label="Tipo de equipo" className="pestanas mt-10">

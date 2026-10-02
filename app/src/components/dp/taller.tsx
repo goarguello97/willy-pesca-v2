@@ -40,7 +40,7 @@ export function Taller() {
           </h2>
           <p className="mt-4 max-w-[44ch] text-lg leading-relaxed text-gris">
             Ataduras, pasahilos, punteras y mangos. Contanos qué le pasó y te pasamos el presupuesto
-            por WhatsApp
+            por WhatsApp.
           </p>
           <figure className="foto-taller-dp mt-10">
             <img

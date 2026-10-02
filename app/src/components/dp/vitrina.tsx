@@ -31,7 +31,7 @@ export function Vitrina() {
           </h1>
           <p className="mt-6 max-w-[42ch] text-lg leading-relaxed text-gris">
             Reels y cañas para pejerrey, carpa y trucha en Calamuchita. Taller propio para dejar tu
-            equipo como nuevo
+            equipo como nuevo.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
             <a

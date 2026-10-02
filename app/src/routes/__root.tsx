@@ -132,7 +132,7 @@ function NotFoundComponent() {
           Acá no pica nada
         </h1>
         <p className="mt-4 text-base leading-relaxed text-gris">
-          La página que buscás no existe o cambió de lugar
+          La página que buscás no existe o cambió de lugar.
         </p>
         <Link
           to="/"
@@ -159,7 +159,7 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
           La página no cargó
         </h1>
         <p className="mt-4 text-base leading-relaxed text-gris">
-          Algo falló de nuestro lado. Probá de nuevo o volvé al inicio
+          Algo falló de nuestro lado. Probá de nuevo o volvé al inicio.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <button

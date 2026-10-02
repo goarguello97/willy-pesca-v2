@@ -81,7 +81,7 @@ export function Parrillas() {
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-white/85">
             Se fabrican únicamente a pedido. Pasanos la medida de tu asador o la de la parrilla que
-            querés
+            querés.
           </p>
           <a
             href={enlaceWhatsapp("Hola Willy, quiero consultar por una parrilla a pedido.")}
@@ -114,7 +114,7 @@ export function Ubicacion() {
             Los Cóndores, Córdoba
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-gris">
-            Antes de venir, escribinos y coordinamos el horario
+            Antes de venir, escribinos y coordinamos el horario.
           </p>
           <dl className="ficha-datos mt-10">
             <div>
@@ -174,7 +174,7 @@ export function Pie() {
         <p className="mt-6 max-w-[40ch] text-sm leading-relaxed text-white/70">
           Reels, cañas, taller y parrillas a pedido en{" "}
           <span className="whitespace-nowrap">
-            {NEGOCIO.localidad}, {NEGOCIO.provincia}
+            {NEGOCIO.localidad}, {NEGOCIO.provincia}.
           </span>
         </p>
 
