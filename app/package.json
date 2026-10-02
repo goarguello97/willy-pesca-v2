@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --config vite.dev.config.ts",
     "dev:design": "HF_DESIGN_INSPECTOR=1 vite dev --mode design",
     "build": "tsc --noEmit & p1=$!; vite build & p2=$!; wait $p1 && wait $p2",
     "build:dev": "vite build --mode development",
