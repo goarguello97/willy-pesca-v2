@@ -80,7 +80,8 @@ export function Parrillas() {
             Parrillas a pedido.
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-white/85">
-            Se fabrican únicamente a pedido. Pasanos la medida de tu patio o tu camping.
+            Se fabrican únicamente a pedido. Pasanos la medida de tu asador o la de la parrilla que
+            querés.
           </p>
           <a
             href={enlaceWhatsapp("Hola Willy, quiero consultar por una parrilla a pedido.")}
