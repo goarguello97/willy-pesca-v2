@@ -8,6 +8,9 @@ import {
 import { LogoWilly } from "./logo-willy";
 import { Flecha, GlifoInstagram, GlifoWhatsapp } from "./marca";
 
+// Crédito de diseño del sitio.
+const LINKEDIN_AUTOR = "https://www.linkedin.com/in/gonzalo-arg%C3%BCello/";
+
 const ANCLAS = [
   { href: "#comparador", texto: "Equipos" },
   { href: "#taller", texto: "Taller" },
@@ -19,9 +22,18 @@ export function Encabezado() {
   return (
     <header className="sticky top-0 z-40 bg-tinta text-white">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-6 px-4 md:px-8">
-        <a href="#inicio" className="flex items-center gap-2.5" aria-label="Willy Pesca y Camping, inicio">
-          <LogoWilly variante="icono" figura="#ffffff" fondo="#0c1424" className="h-10 w-auto" />
-          <span className="cond hidden text-2xl leading-none sm:inline">Willy Pesca</span>
+        <a
+          href="#inicio"
+          className="flex min-w-0 items-center gap-2.5"
+          aria-label="Willy Pesca y Camping, inicio"
+        >
+          <LogoWilly
+            variante="icono"
+            figura="#ffffff"
+            fondo="#0c1424"
+            className="h-8 w-auto shrink-0 sm:h-10"
+          />
+          <span className="cond truncate text-lg leading-none sm:text-2xl">Willy Pesca y Camping</span>
         </a>
         <nav aria-label="Secciones" className="hidden lg:block">
           <ul className="flex gap-9 text-[15px] font-medium">
@@ -38,10 +50,11 @@ export function Encabezado() {
           href={enlaceWhatsapp("Hola Willy, te escribo desde la web.")}
           target="_blank"
           rel="noopener noreferrer"
-          className="cta-encabezado text-[15px]"
+          aria-label="Escribinos por WhatsApp"
+          className="cta-encabezado shrink-0 text-[15px] max-sm:h-10 max-sm:w-10 max-sm:justify-center max-sm:border max-sm:border-white/25 max-sm:bg-none"
         >
           <GlifoWhatsapp className="h-4 w-4" />
-          Escribinos
+          <span className="hidden sm:inline">Escribinos</span>
         </a>
       </div>
     </header>
@@ -200,6 +213,17 @@ export function Pie() {
 
         <div className="mt-12 flex w-full flex-col items-center gap-3 border-t border-white/15 pt-6 text-sm sm:flex-row sm:justify-center sm:gap-8">
           <p className="text-white/60">© 2026 Willy Pesca y Camping</p>
+          <p className="text-white/60">
+            Diseño web:{" "}
+            <a
+              href={LINKEDIN_AUTOR}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline decoration-white/35 underline-offset-4 hover:decoration-white"
+            >
+              Gonzalo Argüello<span className="sr-only"> (LinkedIn)</span>
+            </a>
+          </p>
           <a href="#inicio" className="font-dpmono">
             Volver arriba
           </a>
