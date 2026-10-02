@@ -9,19 +9,24 @@ const ICONO_HASTA = 20;
 
 export function LogoWilly({
   variante = "completo",
+  centrado = false,
   figura = "currentColor",
   fondo = "transparent",
   className,
   titulo,
 }: {
   variante?: "completo" | "icono";
+  // Encuadra el logo completo simétrico respecto del texto (la línea de pulso
+  // se extiende más a la izquierda), para usarlo centrado.
+  centrado?: boolean;
   figura?: string;
   fondo?: string;
   className?: string;
   titulo?: string;
 }) {
   const piezas = variante === "icono" ? COMPLETO.slice(0, ICONO_HASTA) : COMPLETO;
-  const viewBox = variante === "icono" ? "90 262 778 368" : "88 262 796 476";
+  const viewBox =
+    variante === "icono" ? "90 262 778 368" : centrado ? "88 262 880 476" : "88 262 796 476";
   return (
     <svg
       viewBox={viewBox}

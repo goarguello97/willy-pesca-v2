@@ -149,22 +149,23 @@ export function Ubicacion() {
 export function Pie() {
   return (
     <footer className="pie-dp bg-tinta text-white">
-      <div className="mx-auto grid max-w-[1280px] gap-12 px-4 pb-10 pt-16 md:grid-cols-12 md:gap-8 md:px-8 md:pt-20">
-        <div className="md:col-span-5">
-          <LogoWilly
-            figura="#ffffff"
-            fondo="#0c1424"
-            titulo="Willy Pesca y Camping"
-            className="h-auto w-[240px] md:w-[280px]"
-          />
-          <p className="mt-6 max-w-[34ch] text-sm leading-relaxed text-white/70">
-            Reels, cañas, taller y parrillas a pedido en {NEGOCIO.localidad}, {NEGOCIO.provincia}.
-          </p>
-        </div>
+      <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 pb-10 pt-16 text-center md:px-8 md:pt-20">
+        <LogoWilly
+          centrado
+          figura="#ffffff"
+          fondo="#0c1424"
+          titulo="Willy Pesca y Camping"
+          className="h-auto w-[260px] md:w-[320px]"
+        />
+        <p className="mt-6 max-w-[40ch] text-sm leading-relaxed text-white/70">
+          Reels, cañas, taller y parrillas a pedido en{" "}
+          <span className="whitespace-nowrap">
+            {NEGOCIO.localidad}, {NEGOCIO.provincia}.
+          </span>
+        </p>
 
-        <nav aria-label="Secciones del pie" className="md:col-span-3">
-          <p className="font-dpmono text-xs text-cobalto-claro">Secciones</p>
-          <ul className="mt-4 grid gap-2.5 text-[15px]">
+        <nav aria-label="Secciones del pie" className="mt-10">
+          <ul className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-[15px]">
             {ANCLAS.map((a) => (
               <li key={a.href}>
                 <a href={a.href}>{a.texto}</a>
@@ -173,24 +174,31 @@ export function Pie() {
           </ul>
         </nav>
 
-        <div className="md:col-span-4">
-          <p className="font-dpmono text-xs text-cobalto-claro">Contacto</p>
-          <ul className="mt-4 grid gap-2.5 text-[15px]">
-            <li>
-              <a href={enlaceWhatsapp()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
-                <GlifoWhatsapp className="h-4 w-4" />
-                {NEGOCIO.whatsappVisible}
-              </a>
-            </li>
-            <li>
-              <a href={ENLACE_INSTAGRAM} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
-                <GlifoInstagram className="h-4 w-4" />@{NEGOCIO.instagram}
-              </a>
-            </li>
-          </ul>
-        </div>
+        <ul className="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-3 text-[15px]">
+          <li>
+            <a
+              href={enlaceWhatsapp()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2"
+            >
+              <GlifoWhatsapp className="h-4 w-4" />
+              {NEGOCIO.whatsappVisible}
+            </a>
+          </li>
+          <li>
+            <a
+              href={ENLACE_INSTAGRAM}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2"
+            >
+              <GlifoInstagram className="h-4 w-4" />@{NEGOCIO.instagram}
+            </a>
+          </li>
+        </ul>
 
-        <div className="flex flex-col gap-4 border-t border-white/15 pt-6 text-sm md:col-span-12 md:flex-row md:items-center md:justify-between">
+        <div className="mt-12 flex w-full flex-col items-center gap-3 border-t border-white/15 pt-6 text-sm sm:flex-row sm:justify-center sm:gap-8">
           <p className="text-white/60">© 2026 Willy Pesca y Camping</p>
           <a href="#inicio" className="font-dpmono">
             Volver arriba
