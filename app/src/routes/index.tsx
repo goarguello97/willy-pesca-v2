@@ -5,10 +5,14 @@ import { ENLACE_INSTAGRAM, NEGOCIO } from "../components/dp/datos";
 import { Encabezado, Parrillas, Pie, Ubicacion } from "../components/dp/secciones";
 import { Taller } from "../components/dp/taller";
 import { Vitrina } from "../components/dp/vitrina";
+import { obtenerCatalogo } from "../lib/catalogo.functions";
 import { SITE_URL } from "../lib/sitio";
 
 export const Route = createFileRoute("/")({
   // El título y la descripción salen de app-meta.json (ruta raíz).
+  loader: () => obtenerCatalogo(),
+  // La CDN guarda la portada 1 minuto: los cambios del panel tardan eso en verse.
+  headers: () => ({ "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300" }),
   component: Index,
 });
 
@@ -33,6 +37,7 @@ const NEGOCIO_LD = JSON.stringify({
 });
 
 function Index() {
+  const { productos } = Route.useLoaderData();
   return (
     <>
       <StructuredData json={NEGOCIO_LD} />
@@ -44,8 +49,8 @@ function Index() {
       </a>
       <Encabezado />
       <main>
-        <Vitrina />
-        <Comparador />
+        <Vitrina productos={productos} />
+        <Comparador productos={productos} />
         <Taller />
         <Parrillas />
         <Ubicacion />

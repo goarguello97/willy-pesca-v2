@@ -1,17 +1,43 @@
 import { useId, useState } from "react";
-import { PRODUCTOS, enlaceWhatsapp, mensajeConsulta, type Categoria } from "./datos";
+import {
+  CATEGORIAS,
+  formatearLargo,
+  formatearPrecio,
+  fotoPrincipal,
+  mensajeConsulta,
+  textoAlternativo,
+  type Categoria,
+  type Producto,
+} from "./catalogo";
+import { enlaceWhatsapp } from "./datos";
 import { Flecha } from "./marca";
 
-const PESTANAS: Array<{ valor: Categoria; texto: string; columnas: [string, string] }> = [
-  { valor: "reel", texto: "Reels", columnas: ["Tipo", "Rulemanes"] },
-  { valor: "cana", texto: "Cañas", columnas: ["Largo", "Armado"] },
-];
+type Columna = { titulo: string; valor: (p: Producto) => string };
 
-export function Comparador() {
-  const [cat, setCat] = useState<Categoria>("reel");
+const sinDato = (v: string | null | undefined) => (v && v.trim() ? v : "—");
+
+// Las columnas técnicas dependen de la categoría; precio va siempre.
+const COLUMNAS: Record<Categoria, Columna[]> = {
+  reel: [
+    { titulo: "Tipo", valor: (p) => sinDato(p.reelTipo) },
+    { titulo: "Rulemanes", valor: (p) => (p.rulemanes === null ? "—" : String(p.rulemanes)) },
+  ],
+  cana: [
+    { titulo: "Largo", valor: (p) => (p.largoM === null ? "—" : formatearLargo(p.largoM)) },
+    { titulo: "Armado", valor: (p) => sinDato(p.canaArmado) },
+  ],
+  accesorio: [{ titulo: "Detalle", valor: (p) => sinDato(p.descripcion) }],
+  camping: [{ titulo: "Detalle", valor: (p) => sinDato(p.descripcion) }],
+  otro: [{ titulo: "Detalle", valor: (p) => sinDato(p.descripcion) }],
+};
+
+const PRECIO: Columna = { titulo: "Precio", valor: (p) => formatearPrecio(p.precio) ?? "Consultar" };
+
+export function Comparador({ productos }: { productos: Producto[] }) {
+  const pestanas = CATEGORIAS.filter((c) => productos.some((p) => p.categoria === c.valor));
+  const [elegida, setElegida] = useState<Categoria | null>(null);
+  const cat = pestanas.find((t) => t.valor === elegida)?.valor ?? pestanas[0]?.valor;
   const base = useId();
-  const pestana = PESTANAS.find((t) => t.valor === cat)!;
-  const filas = PRODUCTOS.filter((p) => p.categoria === cat);
 
   return (
     <section id="comparador" aria-labelledby="titulo-comparador" className="scroll-mt-16 border-b border-filete">
@@ -20,86 +46,119 @@ export function Comparador() {
           Comparador
         </h2>
         <p className="mt-4 max-w-[58ch] text-lg leading-relaxed text-gris">
-          Todos los equipos con su ficha, lado a lado. Fotos reales; precio y stock por WhatsApp.
+          Todos los equipos con su ficha, lado a lado. Fotos reales; stock por WhatsApp.
         </p>
 
-        <div role="tablist" aria-label="Tipo de equipo" className="pestanas mt-10">
-          {PESTANAS.map((t) => (
-            <button
-              key={t.valor}
-              type="button"
-              role="tab"
-              id={`${base}-${t.valor}`}
-              aria-selected={cat === t.valor}
-              aria-controls={`${base}-panel`}
-              className="pestana"
-              onClick={() => setCat(t.valor)}
-            >
-              {t.texto}
-            </button>
-          ))}
-        </div>
-
-        <div id={`${base}-panel`} role="tabpanel" aria-labelledby={`${base}-${cat}`} className="mt-6">
-          <table className="tabla">
-            <thead>
-              <tr>
-                <th scope="col" colSpan={2}>
-                  Equipo
-                </th>
-                <th scope="col">{pestana.columnas[0]}</th>
-                <th scope="col">{pestana.columnas[1]}</th>
-                <th scope="col">
-                  <span className="sr-only">Consulta</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filas.map((p) => {
-                const [a, b] =
-                  cat === "reel" ? [p.ficha[1], p.ficha[0].split(" ")[0]] : [p.ficha[0], p.ficha[1]];
-                return (
-                  <tr key={p.id}>
-                    <td className="w-[88px]">
-                      <img
-                        src={p.foto}
-                        alt=""
-                        width={64}
-                        height={64}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-16 w-16 border border-filete object-cover"
-                      />
-                    </td>
-                    <td>
-                      <span className="cond text-2xl leading-none">{p.marca}</span>{" "}
-                      <span className="text-lg font-semibold">{p.modelo}</span>
-                    </td>
-                    <td data-dato={pestana.columnas[0]} className="font-dpmono text-sm">
-                      {a}
-                    </td>
-                    <td data-dato={pestana.columnas[1]} className="font-dpmono text-sm">
-                      {b}
-                    </td>
-                    <td className="md:text-right">
-                      <a
-                        href={enlaceWhatsapp(mensajeConsulta(p))}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="consultar-fila mt-2 md:mt-0"
-                        aria-label={`Consultar por ${p.marca} ${p.modelo}`}
-                      >
-                        Consultar
-                        <Flecha className="h-4 w-4" />
-                      </a>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        {cat ? (
+          <>
+            <div role="tablist" aria-label="Tipo de equipo" className="pestanas mt-10">
+              {pestanas.map((t) => (
+                <button
+                  key={t.valor}
+                  type="button"
+                  role="tab"
+                  id={`${base}-${t.valor}`}
+                  aria-selected={cat === t.valor}
+                  aria-controls={`${base}-panel`}
+                  className="pestana"
+                  onClick={() => setElegida(t.valor)}
+                >
+                  {t.plural}
+                </button>
+              ))}
+            </div>
+            <Tabla
+              id={`${base}-panel`}
+              etiqueta={`${base}-${cat}`}
+              columnas={[...COLUMNAS[cat], PRECIO]}
+              filas={productos.filter((p) => p.categoria === cat)}
+            />
+          </>
+        ) : (
+          <p className="mt-10 border border-filete bg-tarjeta px-5 py-6 text-lg">
+            Estamos actualizando el catálogo. Escribinos por WhatsApp y te contamos qué hay.
+          </p>
+        )}
       </div>
     </section>
+  );
+}
+
+function Tabla({
+  id,
+  etiqueta,
+  columnas,
+  filas,
+}: {
+  id: string;
+  etiqueta: string;
+  columnas: Columna[];
+  filas: Producto[];
+}) {
+  return (
+    <div id={id} role="tabpanel" aria-labelledby={etiqueta} className="mt-6">
+      <table className="tabla">
+        <thead>
+          <tr>
+            <th scope="col" colSpan={2}>
+              Equipo
+            </th>
+            {columnas.map((c) => (
+              <th key={c.titulo} scope="col">
+                {c.titulo}
+              </th>
+            ))}
+            <th scope="col">
+              <span className="sr-only">Consulta</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {filas.map((p) => {
+            const foto = fotoPrincipal(p);
+            return (
+              <tr key={p.id}>
+                <td className="w-[88px]">
+                  {foto ? (
+                    <img
+                      src={foto}
+                      alt=""
+                      width={64}
+                      height={64}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-16 w-16 border border-filete object-cover"
+                    />
+                  ) : (
+                    <span className="block h-16 w-16 border border-filete bg-blanco" aria-hidden="true" />
+                  )}
+                </td>
+                <td>
+                  {p.marca ? <span className="cond text-2xl leading-none">{p.marca}</span> : null}{" "}
+                  <span className="text-lg font-semibold">{p.nombre}</span>
+                </td>
+                {columnas.map((c) => (
+                  <td key={c.titulo} data-dato={c.titulo} className="font-dpmono text-sm">
+                    {c.valor(p)}
+                  </td>
+                ))}
+                <td className="md:text-right">
+                  <a
+                    href={enlaceWhatsapp(mensajeConsulta(p))}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="consultar-fila mt-2 md:mt-0"
+                    aria-label={`Consultar por ${textoAlternativo(p)}`}
+                  >
+                    Consultar
+                    <Flecha className="h-4 w-4" />
+                  </a>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

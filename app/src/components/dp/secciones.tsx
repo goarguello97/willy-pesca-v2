@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import {
   ENLACE_COMO_LLEGAR,
   ENLACE_INSTAGRAM,
@@ -228,6 +229,9 @@ export function Pie() {
           <a href="#inicio" className="font-dpmono">
             Volver arriba
           </a>
+          <Link to="/admin" className="font-dpmono text-xs !text-white/30 hover:!text-white/70">
+            Ingresar
+          </Link>
         </div>
       </div>
     </footer>
