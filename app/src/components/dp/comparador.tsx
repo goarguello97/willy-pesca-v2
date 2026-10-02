@@ -1,10 +1,13 @@
+import { Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import {
   CATEGORIAS,
   formatearLargo,
   formatearPrecio,
   fotoPrincipal,
+  imagen,
   mensajeConsulta,
+  slugProducto,
   textoAlternativo,
   type Categoria,
   type Producto,
@@ -59,7 +62,7 @@ export function Comparador({ productos }: { productos: Producto[] }) {
                   role="tab"
                   id={`${base}-${t.valor}`}
                   aria-selected={cat === t.valor}
-                  aria-controls={`${base}-panel`}
+                  aria-controls={`${base}-panel-${t.valor}`}
                   className="pestana"
                   onClick={() => setElegida(t.valor)}
                 >
@@ -67,12 +70,18 @@ export function Comparador({ productos }: { productos: Producto[] }) {
                 </button>
               ))}
             </div>
-            <Tabla
-              id={`${base}-panel`}
-              etiqueta={`${base}-${cat}`}
-              columnas={[...COLUMNAS[cat], PRECIO]}
-              filas={productos.filter((p) => p.categoria === cat)}
-            />
+            {/* Todas las tablas van en el HTML (las inactivas ocultas): así los
+                buscadores encuentran el enlace a cada producto. */}
+            {pestanas.map((t) => (
+              <Tabla
+                key={t.valor}
+                id={`${base}-panel-${t.valor}`}
+                etiqueta={`${base}-${t.valor}`}
+                oculta={t.valor !== cat}
+                columnas={[...COLUMNAS[t.valor], PRECIO]}
+                filas={productos.filter((p) => p.categoria === t.valor)}
+              />
+            ))}
           </>
         ) : (
           <p className="mt-10 border border-filete bg-tarjeta px-5 py-6 text-lg">
@@ -87,16 +96,18 @@ export function Comparador({ productos }: { productos: Producto[] }) {
 function Tabla({
   id,
   etiqueta,
+  oculta,
   columnas,
   filas,
 }: {
   id: string;
   etiqueta: string;
+  oculta: boolean;
   columnas: Columna[];
   filas: Producto[];
 }) {
   return (
-    <div id={id} role="tabpanel" aria-labelledby={etiqueta} className="mt-6">
+    <div id={id} role="tabpanel" aria-labelledby={etiqueta} hidden={oculta} className="mt-6">
       <table className="tabla">
         <thead>
           <tr>
@@ -121,7 +132,7 @@ function Tabla({
                 <td className="w-[88px]">
                   {foto ? (
                     <img
-                      src={foto}
+                      src={imagen(foto, 128)}
                       alt=""
                       width={64}
                       height={64}
@@ -134,8 +145,14 @@ function Tabla({
                   )}
                 </td>
                 <td>
-                  {p.marca ? <span className="cond text-2xl leading-none">{p.marca}</span> : null}{" "}
-                  <span className="text-lg font-semibold">{p.nombre}</span>
+                  <Link
+                    to="/producto/$slug"
+                    params={{ slug: slugProducto(p) }}
+                    className="underline-offset-4 hover:underline"
+                  >
+                    {p.marca ? <span className="cond text-2xl leading-none">{p.marca}</span> : null}{" "}
+                    <span className="text-lg font-semibold">{p.nombre}</span>
+                  </Link>
                 </td>
                 {columnas.map((c) => (
                   <td key={c.titulo} data-dato={c.titulo} className="font-dpmono text-sm">

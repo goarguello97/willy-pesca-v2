@@ -16,6 +16,14 @@ import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
 // Editing it via the app settings UI rewrites this file and redeploys the app.
 import appMetaJson from "../app-meta.json";
 import { SITE_URL } from "../lib/sitio";
+// Fuentes críticas (texto, titulares y la línea mono del hero): se precargan para
+// que lleguen junto con el CSS y el hero no salte al cambiar de fuente.
+import fuenteTexto from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import fuenteTitulos from "@fontsource/barlow-condensed/files/barlow-condensed-latin-800-italic.woff2?url";
+import fuenteMono from "@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url";
+
+// Search Console: el valor de la etiqueta de verificación (método "Etiqueta HTML").
+const VERIFICACION_GOOGLE = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION;
 
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
@@ -78,12 +86,12 @@ function buildHead(meta: AppMeta) {
       { name: "description", content: description },
       { name: "author", content: "Willy Pesca y Camping" },
       { name: "theme-color", content: "#0c1424" },
+      ...(VERIFICACION_GOOGLE ? [{ name: "google-site-verification", content: VERIFICACION_GOOGLE }] : []),
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_AR" },
       { property: "og:site_name", content: "Willy Pesca y Camping" },
-      { property: "og:url", content: `${SITE_URL}/` },
       { name: "twitter:card", content: ogImage ? "summary_large_image" : "summary" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
@@ -94,8 +102,6 @@ function buildHead(meta: AppMeta) {
               property: "og:image",
               content: ogImage.startsWith("/") ? `${SITE_URL}${ogImage}` : ogImage,
             },
-            { property: "og:image:width", content: "1200" },
-            { property: "og:image:height", content: "630" },
             {
               name: "twitter:image",
               content: ogImage.startsWith("/") ? `${SITE_URL}${ogImage}` : ogImage,
@@ -107,18 +113,18 @@ function buildHead(meta: AppMeta) {
       ...(ogVideo ? [{ property: "og:video", content: ogVideo }] : []),
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" as const },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:ital,wght@1,800&family=JetBrains+Mono:wght@400;500&display=swap",
-      },
+      ...[fuenteTexto, fuenteTitulos, fuenteMono].map((href) => ({
+        rel: "preload",
+        href,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous" as const,
+      })),
       { rel: "stylesheet", href: appCss },
       ...(favicon ? [{ rel: "icon", href: favicon, type: "image/svg+xml" }] : []),
       { rel: "icon", href: "/favicon-32.png", type: "image/png", sizes: "32x32" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/site.webmanifest" },
-      { rel: "canonical", href: `${SITE_URL}/` },
     ],
   };
 }

@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { StructuredData } from "../components/StructuredData";
 import { Comparador } from "../components/dp/comparador";
-import { ENLACE_INSTAGRAM, NEGOCIO } from "../components/dp/datos";
 import { Encabezado, Parrillas, Pie, Ubicacion } from "../components/dp/secciones";
 import { Taller } from "../components/dp/taller";
 import { Vitrina } from "../components/dp/vitrina";
 import { obtenerCatalogo } from "../lib/catalogo.functions";
+import { ldNegocio } from "../lib/seo";
 import { SITE_URL } from "../lib/sitio";
 
 export const Route = createFileRoute("/")({
@@ -13,34 +12,20 @@ export const Route = createFileRoute("/")({
   loader: () => obtenerCatalogo(),
   // La CDN guarda la portada 1 minuto: los cambios del panel tardan eso en verse.
   headers: () => ({ "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300" }),
+  head: ({ loaderData }) => ({
+    meta: [
+      { property: "og:url", content: `${SITE_URL}/` },
+      ...(loaderData ? [{ "script:ld+json": ldNegocio(loaderData.productos) }] : []),
+    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+  }),
   component: Index,
-});
-
-const NEGOCIO_LD = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "SportingGoodsStore",
-  name: NEGOCIO.nombre,
-  url: `${SITE_URL}/`,
-  image: `${SITE_URL}/assets/fotos/reel-spinit-sb301.jpg`,
-  telephone: `+${NEGOCIO.whatsapp}`,
-  description: "Venta de reels y cañas de pesca, taller de reparación de cañas y parrillas a pedido.",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: NEGOCIO.localidad,
-    addressRegion: NEGOCIO.provincia,
-    postalCode: NEGOCIO.codigoPostal,
-    addressCountry: "AR",
-  },
-  geo: { "@type": "GeoCoordinates", latitude: NEGOCIO.lat, longitude: NEGOCIO.lon },
-  areaServed: "Calamuchita, Córdoba",
-  sameAs: [ENLACE_INSTAGRAM],
 });
 
 function Index() {
   const { productos } = Route.useLoaderData();
   return (
     <>
-      <StructuredData json={NEGOCIO_LD} />
       <a
         href="#comparador"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-cobalto focus:px-4 focus:py-2 focus:text-white"

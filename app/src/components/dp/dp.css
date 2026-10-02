@@ -9,7 +9,7 @@
   --color-cobalto: #2340c8;
   --color-cobalto-claro: #8fa2ff;
   --color-error: #b42318;
-  --font-dp: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-dp: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-cond: "Barlow Condensed", "Arial Narrow", sans-serif;
   --font-dpmono: "JetBrains Mono", ui-monospace, monospace;
 }

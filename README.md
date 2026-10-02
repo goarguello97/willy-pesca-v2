@@ -11,8 +11,17 @@ Sitio web de **Willy Pesca y Camping**, casa de pesca de Los Cóndores (Calamuch
 - **Vitrina:** el equipo elegido en grande, con etiquetas de su ficha técnica y una tira para cambiar de equipo. El botón "Consultá stock" abre WhatsApp con el equipo ya nombrado.
 - **Comparador:** pestañas por categoría con ficha técnica y precio de cada producto, y consulta por WhatsApp desde cada fila.
 - **Taller de cañas:** formulario que arma el pedido de arreglo y lo abre en WhatsApp para revisarlo y enviarlo.
+- **Página por producto** (`/producto/<nombre>-<código>`): galería, ficha técnica, precio, consulta por WhatsApp y productos relacionados. Si el nombre cambia, la dirección vieja redirige (301) a la nueva.
 - **Parrillas a pedido, ubicación y contacto:** mapa de OpenStreetMap, WhatsApp e Instagram.
-- **SEO:** metadatos Open Graph, datos estructurados (JSON-LD de tipo `SportingGoodsStore`), `sitemap.xml` y `robots.txt`.
+
+### Posicionamiento en buscadores (SEO)
+
+- Título y descripción con rubro y ubicación; cada producto tiene los suyos.
+- Datos estructurados (JSON-LD): el negocio (`SportingGoodsStore`, con su catálogo y servicios), cada producto (`Product`) y la ruta de navegación (`BreadcrumbList`).
+- `sitemap.xml` con la portada y todas las páginas de producto; `robots.txt` deja afuera `/admin`.
+- URL canónica por página y Open Graph para compartir en redes.
+- Rendimiento: fuentes servidas desde el sitio y precargadas, CSS sin estilos de la plantilla y fotos optimizadas por Vercel (tamaño justo y AVIF/WebP).
+- Verificación de Google Search Console con la variable `VITE_GOOGLE_SITE_VERIFICATION`.
 
 ### Panel de administración
 
@@ -45,8 +54,8 @@ Sitio web de **Willy Pesca y Camping**, casa de pesca de Los Cóndores (Calamuch
     ├── src/
     │   ├── components/dp/      secciones del sitio, estilos y modelo del catálogo
     │   ├── components/admin/   panel: sesión, lista, editor y subida de fotos
-    │   ├── lib/                cliente de Supabase, server function del catálogo, URL del sitio
-    │   └── routes/             páginas (/, /admin, /admin/producto/$id, robots, sitemap)
+    │   ├── lib/                Supabase, server functions del catálogo, SEO (JSON-LD) y URL del sitio
+    │   └── routes/             páginas (/, /producto/$slug, /admin, /admin/producto/$id, robots, sitemap)
     ├── supabase/               SQL de la base y guía de configuración (LEEME.md)
     ├── packages/               paquetes de la plantilla original (quanta aporta estilos base)
     ├── vite.config.ts          config base
@@ -81,6 +90,7 @@ Sin esas variables el sitio igual funciona: muestra los 10 equipos de base y el 
 | --- | --- | --- |
 | `VITE_SUPABASE_URL` | `.env.local` y Vercel | URL del proyecto (`https://<id>.supabase.co`) |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | `.env.local` y Vercel | Clave publishable (`sb_publishable_…`) |
+| `VITE_GOOGLE_SITE_VERIFICATION` | Vercel, opcional | Código de verificación de Google Search Console (método "Etiqueta HTML") |
 | `DEV_ALLOWED_HOSTS` | `.env.local`, opcional | Hosts extra para el servidor de desarrollo, separados por coma (por ejemplo, un túnel de ngrok) |
 | `VERCEL_PROJECT_PRODUCTION_URL` | La pone Vercel | Dominio para las URL absolutas (imagen para redes, canonical, JSON-LD) |
 
@@ -119,7 +129,8 @@ Vercel está conectado a este repositorio: cada push a `main` publica una versi�
 
 - **Root Directory:** `app`.
 - **Instalación y build:** `bun install` y `bun run build:vercel`, definidos en `vercel.json`. Nitro genera `.vercel/output`, con la función en Node 22.
-- **Caché:** la portada se guarda 60 segundos en la CDN (`s-maxage=60, stale-while-revalidate=300`).
+- **Caché:** la portada y las páginas de producto se guardan 60 segundos en la CDN (`s-maxage=60, stale-while-revalidate=300`).
+- **Imágenes:** pasan por el optimizador de Vercel (`/_vercel/image`), configurado en `vite.vercel.config.ts` para las fotos del sitio y del bucket de Supabase.
 - **Versión mínima:** Vercel bloquea los despliegues con TanStack Start anterior a 1.168.60 por la vulnerabilidad CVE-2026-102989. El proyecto ya usa una versión corregida.
 - **Importación:** si Vercel detecta "varias aplicaciones" por la carpeta `app/packages`, el proyecto se importa como una sola app TanStack Start. `vercel.json` ya fija el framework.
 

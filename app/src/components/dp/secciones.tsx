@@ -13,10 +13,10 @@ import { Flecha, GlifoInstagram, GlifoWhatsapp } from "./marca";
 const LINKEDIN_AUTOR = "https://www.linkedin.com/in/gonzalo-arg%C3%BCello/";
 
 const ANCLAS = [
-  { href: "#comparador", texto: "Equipos" },
-  { href: "#taller", texto: "Taller" },
-  { href: "#parrillas", texto: "Parrillas" },
-  { href: "#ubicacion", texto: "Ubicación" },
+  { href: "/#comparador", texto: "Equipos" },
+  { href: "/#taller", texto: "Taller" },
+  { href: "/#parrillas", texto: "Parrillas" },
+  { href: "/#ubicacion", texto: "Ubicación" },
 ];
 
 export function Encabezado() {
@@ -24,7 +24,7 @@ export function Encabezado() {
     <header className="sticky top-0 z-40 bg-tinta text-white">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-6 px-4 md:px-8">
         <a
-          href="#inicio"
+          href="/"
           className="flex min-w-0 items-center gap-2.5"
           aria-label="Willy Pesca y Camping, inicio"
         >
@@ -229,7 +229,7 @@ export function Pie() {
           <a href="#inicio" className="font-dpmono">
             Volver arriba
           </a>
-          <Link to="/admin" className="font-dpmono text-xs !text-white/30 hover:!text-white/70">
+          <Link to="/admin" className="font-dpmono text-xs !text-white/50 hover:!text-white/80">
             Ingresar
           </Link>
         </div>

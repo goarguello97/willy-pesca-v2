@@ -1,3 +1,5 @@
+import type { AnchoImagen } from "../../lib/anchos-imagen";
+
 // Modelo del catálogo: lo que guarda Supabase (tabla productos + producto_imagenes)
 // y cómo se muestra en la vitrina, el comparador y el panel.
 
@@ -31,12 +33,13 @@ export type Producto = {
   destacado: boolean;
   publicado: boolean;
   creadoEn: string;
+  actualizadoEn: string;
   imagenes: Imagen[];
 };
 
 // Columnas que se piden a Supabase, con las fotos ordenadas.
 export const SELECT_PRODUCTO =
-  "id, categoria, marca, nombre, precio, descripcion, reel_tipo, rulemanes, largo_m, cana_armado, destacado, publicado, creado_en, producto_imagenes(id, url, ruta, orden)";
+  "id, categoria, marca, nombre, precio, descripcion, reel_tipo, rulemanes, largo_m, cana_armado, destacado, publicado, creado_en, actualizado_en, producto_imagenes(id, url, ruta, orden)";
 
 export type FilaProducto = {
   id: string;
@@ -52,6 +55,7 @@ export type FilaProducto = {
   destacado: boolean;
   publicado: boolean;
   creado_en: string;
+  actualizado_en: string;
   producto_imagenes: Imagen[] | null;
 };
 
@@ -73,9 +77,49 @@ export function desdeFila(f: FilaProducto): Producto {
     destacado: f.destacado,
     publicado: f.publicado,
     creadoEn: f.creado_en,
+    actualizadoEn: f.actualizado_en,
     imagenes: [...(f.producto_imagenes ?? [])].sort((a, b) => a.orden - b.orden),
   };
 }
+
+// URL de cada producto: texto legible + una huella corta del id. La huella hace
+// la URL única y permite encontrar el producto aunque después cambie el nombre
+// (la página redirige a la URL nueva).
+const aSlug = (texto: string) =>
+  texto
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+function huella(id: string): string {
+  let h = 5381;
+  for (const c of id) h = ((h * 33) ^ c.charCodeAt(0)) >>> 0;
+  return h.toString(36).padStart(6, "0").slice(-6);
+}
+
+export function slugProducto(p: Producto): string {
+  const largo = p.categoria === "cana" && p.largoM !== null ? formatearLargo(p.largoM) : null;
+  const texto = aSlug([NOMBRE_CATEGORIA[p.categoria], p.marca, p.nombre, largo].filter(Boolean).join(" "));
+  return `${texto}-${huella(p.id)}`;
+}
+
+export const huellaDeSlug = (slug: string) => slug.slice(slug.lastIndexOf("-") + 1);
+
+export const coincideHuella = (p: Producto, slug: string) => huella(p.id) === huellaDeSlug(slug);
+
+export const urlProducto = (p: Producto) => `/producto/${slugProducto(p)}`;
+
+// En Vercel las fotos pasan por su optimizador: tamaño justo y AVIF/WebP.
+type Ancho = AnchoImagen;
+const OPTIMIZAR = import.meta.env.VITE_IMAGENES_VERCEL === "1";
+
+export const imagen = (url: string, ancho: Ancho, calidad = 75): string =>
+  OPTIMIZAR ? `/_vercel/image?url=${encodeURIComponent(url)}&w=${ancho}&q=${calidad}` : url;
+
+export const srcsetImagen = (url: string, anchos: Ancho[]): string | undefined =>
+  OPTIMIZAR ? anchos.map((w) => `${imagen(url, w)} ${w}w`).join(", ") : undefined;
 
 // Reels primero, después cañas y el resto; dentro de cada categoría, lo más nuevo.
 export function ordenarCatalogo(productos: Producto[]): Producto[] {
@@ -124,6 +168,21 @@ export function lecturas(p: Producto): [{ dato: string; valor: string }, { dato:
   ];
 }
 
+// Datos técnicos que se listan en la página del producto (y en su JSON-LD).
+export function filasFicha(p: Producto): Array<{ dato: string; valor: string }> {
+  const filas = [{ dato: "Categoría", valor: NOMBRE_CATEGORIA[p.categoria] }];
+  if (p.marca) filas.push({ dato: "Marca", valor: p.marca });
+  if (p.categoria === "reel") {
+    if (p.reelTipo) filas.push({ dato: "Tipo", valor: p.reelTipo });
+    if (p.rulemanes !== null) filas.push({ dato: "Rulemanes", valor: String(p.rulemanes) });
+  }
+  if (p.categoria === "cana") {
+    if (p.largoM !== null) filas.push({ dato: "Largo", valor: formatearLargo(p.largoM) });
+    if (p.canaArmado) filas.push({ dato: "Armado", valor: p.canaArmado });
+  }
+  return filas;
+}
+
 export function mensajeConsulta(p: Producto): string {
   const nombre = `${NOMBRE_CATEGORIA[p.categoria]} ${tituloProducto(p)}`;
   const precio = formatearPrecio(p.precio);
@@ -164,5 +223,6 @@ export const CATALOGO_ESTATICO: Producto[] = SEMILLAS.map((s, i) => ({
   destacado: true,
   publicado: true,
   creadoEn: new Date(Date.UTC(2026, 0, 1, 0, 0, SEMILLAS.length - i)).toISOString(),
+  actualizadoEn: new Date(Date.UTC(2026, 0, 1)).toISOString(),
   imagenes: [{ id: `foto-${s.foto}`, url: `/assets/fotos/${s.foto}.jpg`, ruta: null, orden: 0 }],
 }));

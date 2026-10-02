@@ -1,10 +1,14 @@
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   NOMBRE_CATEGORIA,
   formatearPrecio,
   fotoPrincipal,
+  imagen,
   lecturas,
   mensajeConsulta,
+  slugProducto,
+  srcsetImagen,
   textoAlternativo,
   tituloProducto,
   type Producto,
@@ -30,10 +34,15 @@ export function Vitrina({ productos }: { productos: Producto[] }) {
     <section id="inicio" aria-labelledby="titulo-vitrina" className="overflow-hidden border-b border-filete">
       <div className="mx-auto grid max-w-[1280px] items-center gap-14 px-4 pb-16 pt-12 md:px-8 lg:grid-cols-2 lg:gap-10 lg:pb-20 lg:pt-16">
         <div className="min-w-0">
-          <h1 id="titulo-vitrina" className="cond text-[3.4rem] leading-[0.88] md:text-[clamp(3.4rem,6.2vw,5.6rem)]">
-            Equipá tu
-            <br />
-            próxima salida
+          <h1 id="titulo-vitrina">
+            <span className="mb-4 block font-dpmono text-sm font-medium text-cobalto">
+              Casa de pesca y camping en Los Cóndores, Córdoba
+            </span>
+            <span className="cond block text-[3.4rem] leading-[0.88] md:text-[clamp(3.4rem,6.2vw,5.6rem)]">
+              Equipá tu
+              <br />
+              próxima salida
+            </span>
           </h1>
           <p className="mt-6 max-w-[42ch] text-lg leading-relaxed text-gris">
             Reels y cañas para pejerrey, carpa y trucha en Calamuchita. Taller propio para dejar tu
@@ -81,10 +90,13 @@ function Escena({
           <div className="vitrina__foto">
             <img
               key={p.id}
-              src={fotoPrincipal(p) ?? undefined}
+              src={imagen(fotoPrincipal(p) ?? "", 640)}
+              srcSet={srcsetImagen(fotoPrincipal(p) ?? "", [384, 640, 1080])}
+              sizes="(min-width: 1024px) 444px, 82vw"
               alt={textoAlternativo(p)}
               width={640}
               height={640}
+              fetchPriority={actual === 0 ? "high" : undefined}
               className={actual === 0 ? undefined : "entra"}
             />
           </div>
@@ -103,7 +115,13 @@ function Escena({
             <i />
           </span>
           <figcaption className="flex items-center justify-between gap-4 border-t border-filete px-4 py-3">
-            <span className="cond text-2xl leading-none">{tituloProducto(p)}</span>
+            <Link
+              to="/producto/$slug"
+              params={{ slug: slugProducto(p) }}
+              className="cond text-2xl leading-none underline-offset-4 hover:underline"
+            >
+              {tituloProducto(p)}
+            </Link>
             <span className="shrink-0 font-dpmono text-xs text-cobalto">
               {NOMBRE_CATEGORIA[p.categoria]} · {String(actual + 1).padStart(2, "0")}/
               {String(productos.length).padStart(2, "0")}
@@ -136,7 +154,7 @@ function Escena({
                 onFocus={() => onElegir(i)}
               >
                 <img
-                  src={fotoPrincipal(q) ?? undefined}
+                  src={imagen(fotoPrincipal(q) ?? "", 128)}
                   alt=""
                   width={64}
                   height={64}
