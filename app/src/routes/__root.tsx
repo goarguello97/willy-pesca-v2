@@ -15,13 +15,13 @@ import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
 // repo by the marketplace meta API and read at BUILD time — no runtime fetch.
 // Editing it via the app settings UI rewrites this file and redeploys the app.
 import appMetaJson from "../app-meta.json";
+import { SITE_URL } from "../lib/sitio";
 
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
 // Built-in defaults for any field that isn't set in app-meta.json.
 const DEFAULT_TITLE = "Willy Pesca y Camping";
 const DEFAULT_DESCRIPTION = "Equipos de pesca y reparación de cañas en Los Cóndores, Córdoba.";
-const SITE_URL = "https://willy-pesca-deportivo.higgsfield.app";
 
 type AppMeta = {
   og_title?: string | null;

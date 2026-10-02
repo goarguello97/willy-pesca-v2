@@ -11,6 +11,7 @@
     "dev:design": "HF_DESIGN_INSPECTOR=1 vite dev --mode design",
     "build": "tsc --noEmit & p1=$!; vite build & p2=$!; wait $p1 && wait $p2",
     "build:dev": "vite build --mode development",
+    "build:vercel": "vite build --config vite.vercel.config.ts",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
