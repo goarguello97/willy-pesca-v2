@@ -1,0 +1,14 @@
+{
+  "name": "Willy Pesca y Camping",
+  "short_name": "Willy Pesca",
+  "lang": "es-AR",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#f3f4f6",
+  "theme_color": "#0c1424",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}

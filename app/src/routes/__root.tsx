@@ -8,8 +8,6 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { button } from "@higgsfield/quanta/button";
-import { NotFound } from "@higgsfield/quanta/not-found";
 
 import appCss from "../styles.css?url";
 import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
@@ -21,8 +19,9 @@ import appMetaJson from "../app-meta.json";
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
 // Built-in defaults for any field that isn't set in app-meta.json.
-const DEFAULT_TITLE = "Higgsfield App";
-const DEFAULT_DESCRIPTION = "Higgsfield Generated Project";
+const DEFAULT_TITLE = "Willy Pesca y Camping";
+const DEFAULT_DESCRIPTION = "Equipos de pesca y reparación de cañas en Los Cóndores, Córdoba.";
+const SITE_URL = "https://willy-pesca-deportivo.higgsfield.app";
 
 type AppMeta = {
   og_title?: string | null;
@@ -77,16 +76,30 @@ function buildHead(meta: AppMeta) {
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title },
       { name: "description", content: description },
-      { name: "author", content: "Higgsfield" },
+      { name: "author", content: "Willy Pesca y Camping" },
+      { name: "theme-color", content: "#0c1424" },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "es_AR" },
+      { property: "og:site_name", content: "Willy Pesca y Camping" },
+      { property: "og:url", content: `${SITE_URL}/` },
       { name: "twitter:card", content: ogImage ? "summary_large_image" : "summary" },
-      { name: "twitter:site", content: "@Higgsfield" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
       ...(ogImage
         ? [
-            { property: "og:image", content: ogImage },
-            { name: "twitter:image", content: ogImage },
+            // Las tarjetas sociales necesitan URL absoluta.
+            {
+              property: "og:image",
+              content: ogImage.startsWith("/") ? `${SITE_URL}${ogImage}` : ogImage,
+            },
+            { property: "og:image:width", content: "1200" },
+            { property: "og:image:height", content: "630" },
+            {
+              name: "twitter:image",
+              content: ogImage.startsWith("/") ? `${SITE_URL}${ogImage}` : ogImage,
+            },
           ]
         : []),
       // Cover video (og:video) — the animated counterpart of og:image; the
@@ -94,26 +107,41 @@ function buildHead(meta: AppMeta) {
       ...(ogVideo ? [{ property: "og:video", content: ogVideo }] : []),
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" as const },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:ital,wght@1,800&family=JetBrains+Mono:wght@400;500&display=swap",
+      },
       { rel: "stylesheet", href: appCss },
-      ...(favicon ? [{ rel: "icon", href: favicon }] : []),
+      ...(favicon ? [{ rel: "icon", href: favicon, type: "image/svg+xml" }] : []),
+      { rel: "icon", href: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "canonical", href: `${SITE_URL}/` },
     ],
   };
 }
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-q-background-primary px-4">
-      <NotFound
-        className="mx-auto max-w-md"
-        icon={<span className="text-q-title-md-semi-bold text-q-text-primary">404</span>}
-        title="Page not found"
-        subtitle="The page you're looking for doesn't exist or has been moved."
-      >
-        <Link to="/" className={button({ variant: "primary", size: "md" }, "mt-3")}>
-          Go home
+    <main className="flex min-h-dvh items-center justify-center bg-blanco px-4">
+      <div className="max-w-md">
+        <p className="font-dpmono text-sm text-gris">404</p>
+        <h1 className="mt-2 cond text-5xl leading-none text-tinta">
+          Acá no pica nada.
+        </h1>
+        <p className="mt-4 text-base leading-relaxed text-gris">
+          La página que buscás no existe o cambió de lugar.
+        </p>
+        <Link
+          to="/"
+          className="mt-6 inline-flex h-12 items-center border-[1.5px] border-tinta px-5 font-dp font-semibold text-tinta hover:bg-tinta hover:text-white"
+        >
+          Volver al inicio
         </Link>
-      </NotFound>
-    </div>
+      </div>
+    </main>
   );
 }
 
@@ -125,28 +153,33 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-q-background-primary px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-q-title-lg-semi-bold text-q-text-primary">This page didn't load</h1>
-        <p className="mt-2 text-q-body-sm-regular text-q-text-secondary">
-          Something went wrong on our end. You can try refreshing or head back home.
+    <main className="flex min-h-dvh items-center justify-center bg-blanco px-4">
+      <div className="max-w-md">
+        <h1 className="cond text-5xl leading-none text-tinta">
+          La página no cargó.
+        </h1>
+        <p className="mt-4 text-base leading-relaxed text-gris">
+          Algo falló de nuestro lado. Probá de nuevo o volvé al inicio.
         </p>
-        <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <div className="mt-6 flex flex-wrap gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className={button({ variant: "primary", size: "md" })}
+            className="inline-flex h-12 items-center bg-cobalto px-5 font-dp font-semibold text-white"
           >
-            Try again
+            Reintentar
           </button>
-          <a href="/" className={button({ variant: "outline", size: "md" })}>
-            Go home
+          <a
+            href="/"
+            className="inline-flex h-12 items-center border-[1.5px] border-tinta px-5 font-dp font-semibold text-tinta"
+          >
+            Volver al inicio
           </a>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -161,14 +194,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" data-theme="default-dark" style={{ colorScheme: "dark" }}>
-      {/* Marketplace apps are permanently dark: data-theme is pinned on <html>
-          above. Do not add quanta's bootstrapScript/ThemeController, a theme
-          toggle, or a light mode. */}
+    <html lang="es-AR" style={{ colorScheme: "light" }}>
+      {/* Sitio con marca propia: tema claro fijo, sin Quanta ni tema oscuro. */}
       <head>
         <HeadContent />
       </head>
-      <body className="bg-q-background-primary text-q-text-primary">
+      <body className="bg-blanco text-tinta">
         {children}
         <Scripts />
       </body>
