@@ -129,10 +129,10 @@ function NotFoundComponent() {
       <div className="max-w-md">
         <p className="font-dpmono text-sm text-gris">404</p>
         <h1 className="mt-2 cond text-5xl leading-none text-tinta">
-          Acá no pica nada.
+          Acá no pica nada
         </h1>
         <p className="mt-4 text-base leading-relaxed text-gris">
-          La página que buscás no existe o cambió de lugar.
+          La página que buscás no existe o cambió de lugar
         </p>
         <Link
           to="/"
@@ -156,10 +156,10 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
     <main className="flex min-h-dvh items-center justify-center bg-blanco px-4">
       <div className="max-w-md">
         <h1 className="cond text-5xl leading-none text-tinta">
-          La página no cargó.
+          La página no cargó
         </h1>
         <p className="mt-4 text-base leading-relaxed text-gris">
-          Algo falló de nuestro lado. Probá de nuevo o volvé al inicio.
+          Algo falló de nuestro lado. Probá de nuevo o volvé al inicio
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <button

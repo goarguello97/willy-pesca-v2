@@ -77,11 +77,11 @@ export function Parrillas() {
       <div className="relative mx-auto flex min-h-[460px] max-w-[1280px] items-center px-4 py-16 md:min-h-[520px] md:px-8">
         <div className="max-w-[480px]">
           <h2 id="titulo-parrillas" className="cond text-5xl leading-[0.9] md:text-7xl">
-            Parrillas a pedido.
+            Parrillas a pedido
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-white/85">
             Se fabrican únicamente a pedido. Pasanos la medida de tu asador o la de la parrilla que
-            querés.
+            querés
           </p>
           <a
             href={enlaceWhatsapp("Hola Willy, quiero consultar por una parrilla a pedido.")}
@@ -111,10 +111,10 @@ export function Ubicacion() {
         </div>
         <div className="lg:col-span-5">
           <h2 id="titulo-ubicacion" className="cond text-5xl leading-[0.9] md:text-7xl">
-            Los Cóndores, Córdoba.
+            Los Cóndores, Córdoba
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-gris">
-            Antes de venir, escribinos y coordinamos el horario.
+            Antes de venir, escribinos y coordinamos el horario
           </p>
           <dl className="ficha-datos mt-10">
             <div>
@@ -174,7 +174,7 @@ export function Pie() {
         <p className="mt-6 max-w-[40ch] text-sm leading-relaxed text-white/70">
           Reels, cañas, taller y parrillas a pedido en{" "}
           <span className="whitespace-nowrap">
-            {NEGOCIO.localidad}, {NEGOCIO.provincia}.
+            {NEGOCIO.localidad}, {NEGOCIO.provincia}
           </span>
         </p>
 

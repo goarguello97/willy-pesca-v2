@@ -27,11 +27,11 @@ export function Vitrina() {
           <h1 id="titulo-vitrina" className="cond text-[3.4rem] leading-[0.88] md:text-[clamp(3.4rem,6.2vw,5.6rem)]">
             Equipá tu
             <br />
-            próxima salida.
+            próxima salida
           </h1>
           <p className="mt-6 max-w-[42ch] text-lg leading-relaxed text-gris">
             Reels y cañas para pejerrey, carpa y trucha en Calamuchita. Taller propio para dejar tu
-            equipo como nuevo.
+            equipo como nuevo
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
             <a

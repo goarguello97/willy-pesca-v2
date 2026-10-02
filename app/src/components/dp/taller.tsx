@@ -36,11 +36,11 @@ export function Taller() {
       <div className="mx-auto grid max-w-[1280px] gap-12 px-4 py-20 md:px-8 md:py-28 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-5">
           <h2 id="titulo-taller" className="cond text-5xl leading-none md:text-7xl">
-            Taller de cañas.
+            Taller de cañas
           </h2>
           <p className="mt-4 max-w-[44ch] text-lg leading-relaxed text-gris">
             Ataduras, pasahilos, punteras y mangos. Contanos qué le pasó y te pasamos el presupuesto
-            por WhatsApp.
+            por WhatsApp
           </p>
           <figure className="foto-taller-dp mt-10">
             <img
