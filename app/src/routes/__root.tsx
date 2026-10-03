@@ -16,11 +16,10 @@ import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
 // Editing it via the app settings UI rewrites this file and redeploys the app.
 import appMetaJson from "../app-meta.json";
 import { SITE_URL } from "../lib/sitio";
-// Fuentes críticas (texto, titulares y la línea mono del hero): se precargan para
+// Fuentes críticas (texto y titulares): se precargan para
 // que lleguen junto con el CSS y el hero no salte al cambiar de fuente.
 import fuenteTexto from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import fuenteTitulos from "@fontsource/barlow-condensed/files/barlow-condensed-latin-800-italic.woff2?url";
-import fuenteMono from "@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url";
 
 // Search Console: el valor de la etiqueta de verificación (método "Etiqueta HTML").
 const VERIFICACION_GOOGLE = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION;
@@ -113,7 +112,7 @@ function buildHead(meta: AppMeta) {
       ...(ogVideo ? [{ property: "og:video", content: ogVideo }] : []),
     ],
     links: [
-      ...[fuenteTexto, fuenteTitulos, fuenteMono].map((href) => ({
+      ...[fuenteTexto, fuenteTitulos].map((href) => ({
         rel: "preload",
         href,
         as: "font",

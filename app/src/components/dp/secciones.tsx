@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { imagen, srcsetImagen } from "./catalogo";
 import {
   ENLACE_COMO_LLEGAR,
   ENLACE_INSTAGRAM,
@@ -66,7 +68,7 @@ export function Parrillas() {
   return (
     <section id="parrillas" aria-labelledby="titulo-parrillas" className="banda-dp scroll-mt-16">
       <img
-        src="/assets/fotos/parrilla-sierras.jpg"
+        src={imagen("/assets/fotos/parrilla-sierras.jpg", 828)}
         alt="Parrilla de hierro sobre piso de piedra frente a las sierras"
         width={640}
         height={492}
@@ -103,12 +105,7 @@ export function Ubicacion() {
     <section id="ubicacion" aria-labelledby="titulo-ubicacion" className="scroll-mt-16">
       <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-20 md:px-8 md:py-28 lg:grid-cols-12 lg:gap-16">
         <div className="mapa-dp lg:col-span-7">
-          <iframe
-            title={`Mapa de ${NEGOCIO.localidad}, ${NEGOCIO.provincia}`}
-            src={MAPA_EMBED}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          <Mapa />
         </div>
         <div className="lg:col-span-5">
           <h2 id="titulo-ubicacion" className="cond text-5xl leading-[0.9] md:text-7xl">
@@ -158,6 +155,43 @@ export function Ubicacion() {
         </div>
       </div>
     </section>
+  );
+}
+
+// Imagen fija del mapa; el mapa interactivo de OpenStreetMap (~300 KB de
+// script y teselas) se carga recién cuando alguien lo pide.
+const MAPA_ESTATICO = "/assets/mapa-los-condores.jpg";
+
+function Mapa() {
+  const [interactivo, setInteractivo] = useState(false);
+  if (interactivo) {
+    return (
+      <iframe
+        title={`Mapa de ${NEGOCIO.localidad}, ${NEGOCIO.provincia}`}
+        src={MAPA_EMBED}
+        referrerPolicy="no-referrer-when-downgrade"
+      />
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={() => setInteractivo(true)}
+      className="mapa-estatico"
+      aria-label={`Abrir el mapa interactivo de ${NEGOCIO.localidad}`}
+    >
+      <img
+        src={imagen(MAPA_ESTATICO, 828)}
+        srcSet={srcsetImagen(MAPA_ESTATICO, [640, 828, 1080])}
+        sizes="(min-width: 1024px) 680px, 100vw"
+        alt={`Mapa de ${NEGOCIO.localidad}, ${NEGOCIO.zona}, ${NEGOCIO.provincia}`}
+        width={1080}
+        height={810}
+        loading="lazy"
+        decoding="async"
+      />
+      <span className="mapa-estatico__accion">Ver mapa interactivo</span>
+    </button>
   );
 }
 

@@ -1,4 +1,5 @@
 import { useId, useState, type FormEvent } from "react";
+import { imagen } from "./catalogo";
 import { enlaceWhatsapp } from "./datos";
 import { Flecha } from "./marca";
 
@@ -44,7 +45,7 @@ export function Taller() {
           </p>
           <figure className="foto-taller-dp mt-10">
             <img
-              src="/assets/fotos/reparacion-empatillado.jpg"
+              src={imagen("/assets/fotos/reparacion-empatillado.jpg", 640)}
               alt="Caña de pesca con una atadura de hilo nueva en el empalme"
               width={361}
               height={640}
