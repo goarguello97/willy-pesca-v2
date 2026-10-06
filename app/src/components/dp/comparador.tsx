@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import {
   CATEGORIAS,
+  NOMBRE_CATEGORIA,
   formatearLargo,
   formatearPrecio,
   fotoPrincipal,
@@ -35,6 +36,41 @@ const COLUMNAS: Record<Categoria, Columna[]> = {
 };
 
 const PRECIO: Columna = { titulo: "Precio", valor: (p) => formatearPrecio(p.precio) ?? "Consultar" };
+const CATEGORIA: Columna = { titulo: "Categoría", valor: (p) => NOMBRE_CATEGORIA[p.categoria] };
+
+type Orden = "nuevos" | "menor" | "mayor";
+
+const normalizar = (t: string) =>
+  t
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+// Todo lo que se puede buscar de un producto, sin tildes ni mayúsculas.
+const textoBuscable = (p: Producto) =>
+  normalizar(
+    [
+      p.marca,
+      p.nombre,
+      NOMBRE_CATEGORIA[p.categoria],
+      CATEGORIAS.find((c) => c.valor === p.categoria)?.plural,
+      p.descripcion,
+      p.reelTipo,
+      p.rulemanes === null ? null : `${p.rulemanes} rulemanes`,
+      p.largoM === null ? null : formatearLargo(p.largoM),
+      p.canaArmado,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
+
+// "Más nuevos" respeta el orden del catálogo; por precio, los que no tienen van al final.
+function ordenar(lista: Producto[], orden: Orden): Producto[] {
+  if (orden === "nuevos") return lista;
+  const conPrecio = lista.filter((p) => p.precio !== null);
+  conPrecio.sort((a, b) => (orden === "menor" ? a.precio! - b.precio! : b.precio! - a.precio!));
+  return [...conPrecio, ...lista.filter((p) => p.precio === null)];
+}
 
 export function Comparador({ productos }: { productos: Producto[] }) {
   // Camping tiene su propia sección; acá van solo los equipos de pesca.
@@ -44,6 +80,14 @@ export function Comparador({ productos }: { productos: Producto[] }) {
   const [elegida, setElegida] = useState<Categoria | null>(null);
   const cat = pestanas.find((t) => t.valor === elegida)?.valor ?? pestanas[0]?.valor;
   const base = useId();
+  const [busqueda, setBusqueda] = useState("");
+  const [orden, setOrden] = useState<Orden>("nuevos");
+  const palabras = normalizar(busqueda).split(/\s+/).filter(Boolean);
+  const resultados = useMemo(
+    () => ordenar(productos.filter((p) => palabras.every((w) => textoBuscable(p).includes(w))), orden),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [productos, busqueda, orden],
+  );
 
   return (
     <section id="comparador" aria-labelledby="titulo-comparador" className="scroll-mt-16 border-b border-filete">
@@ -55,7 +99,53 @@ export function Comparador({ productos }: { productos: Producto[] }) {
           Todos los equipos con su ficha, lado a lado. Fotos reales; stock por WhatsApp.
         </p>
 
-        {cat ? (
+        {productos.length ? (
+          <div className="mt-10 flex flex-wrap items-end gap-4">
+            <div className="grid min-w-[240px] max-w-[440px] flex-1 gap-2">
+              <label htmlFor={`${base}-buscar`} className="text-sm font-semibold">
+                Buscar
+              </label>
+              <input
+                id={`${base}-buscar`}
+                type="search"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Marca, modelo o tipo: spinit, telescópica…"
+                className="campo-dp"
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor={`${base}-orden`} className="text-sm font-semibold">
+                Ordenar
+              </label>
+              <select
+                id={`${base}-orden`}
+                value={orden}
+                onChange={(e) => setOrden(e.target.value as Orden)}
+                className="campo-dp"
+              >
+                <option value="nuevos">Más nuevos</option>
+                <option value="menor">Menor precio</option>
+                <option value="mayor">Mayor precio</option>
+              </select>
+            </div>
+          </div>
+        ) : null}
+
+        {palabras.length ? (
+          <>
+            <p role="status" className="mt-6 font-dpmono text-sm text-gris">
+              {resultados.length === 1 ? "1 resultado" : `${resultados.length} resultados`}
+            </p>
+            {resultados.length ? (
+              <Tabla columnas={[CATEGORIA, PRECIO]} filas={resultados} />
+            ) : (
+              <p className="mt-4 border border-filete bg-tarjeta px-5 py-6 text-lg">
+                No encontramos «{busqueda.trim()}». Probá con otra palabra o consultanos por WhatsApp.
+              </p>
+            )}
+          </>
+        ) : cat ? (
           <>
             <div role="tablist" aria-label="Tipo de equipo" className="pestanas mt-10">
               {pestanas.map((t) => (
@@ -82,7 +172,10 @@ export function Comparador({ productos }: { productos: Producto[] }) {
                 etiqueta={`${base}-${t.valor}`}
                 oculta={t.valor !== cat}
                 columnas={[...COLUMNAS[t.valor], PRECIO]}
-                filas={productos.filter((p) => p.categoria === t.valor)}
+                filas={ordenar(
+                  productos.filter((p) => p.categoria === t.valor),
+                  orden,
+                )}
               />
             ))}
           </>
@@ -99,18 +192,20 @@ export function Comparador({ productos }: { productos: Producto[] }) {
 function Tabla({
   id,
   etiqueta,
-  oculta,
+  oculta = false,
   columnas,
   filas,
 }: {
-  id: string;
-  etiqueta: string;
-  oculta: boolean;
+  id?: string;
+  etiqueta?: string;
+  oculta?: boolean;
   columnas: Columna[];
   filas: Producto[];
 }) {
+  // Con pestañas es un tabpanel; los resultados de búsqueda son una tabla común.
+  const panel = etiqueta ? { role: "tabpanel", "aria-labelledby": etiqueta } : {};
   return (
-    <div id={id} role="tabpanel" aria-labelledby={etiqueta} hidden={oculta} className="mt-6">
+    <div id={id} {...panel} hidden={oculta} className="mt-6">
       <table className="tabla">
         <thead>
           <tr>
