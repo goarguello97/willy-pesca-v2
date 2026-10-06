@@ -1,6 +1,6 @@
 # Willy Pesca y Camping
 
-Sitio web de **Willy Pesca y Camping**, casa de pesca de Los Cóndores (Calamuchita, Córdoba). Muestra el catálogo de reels y cañas con su ficha técnica, recibe pedidos de arreglo de cañas y de parrillas por WhatsApp, y tiene un panel para que el negocio cargue y actualice sus productos.
+Sitio web de **Willy Pesca y Camping**, casa de pesca de Los Cóndores (Calamuchita, Córdoba). Muestra el catálogo de reels y cañas con su ficha técnica, canaliza las consultas por WhatsApp y tiene un panel para que el negocio cargue y actualice sus productos.
 
 **Producción:** https://willypesca.vercel.app
 
@@ -10,9 +10,9 @@ Sitio web de **Willy Pesca y Camping**, casa de pesca de Los Cóndores (Calamuch
 
 - **Vitrina:** el equipo elegido en grande, con etiquetas de su ficha técnica y una tira para cambiar de equipo. El botón "Consultá stock" abre WhatsApp con el equipo ya nombrado.
 - **Comparador:** pestañas por categoría con ficha técnica y precio de cada producto, y consulta por WhatsApp desde cada fila.
-- **Taller de cañas:** formulario que arma el pedido de arreglo y lo abre en WhatsApp para revisarlo y enviarlo.
 - **Página por producto** (`/producto/<nombre>-<código>`): galería, ficha técnica, precio, consulta por WhatsApp y productos relacionados. Si el nombre cambia, la dirección vieja redirige (301) a la nueva.
-- **Parrillas a pedido, ubicación y contacto:** mapa de OpenStreetMap, WhatsApp e Instagram.
+- **Cómo comprar:** los tres pasos (elegir, consultar por WhatsApp y retirar en Los Cóndores).
+- **Ubicación y contacto:** mapa de OpenStreetMap (se carga al tocarlo), WhatsApp e Instagram.
 
 ### Posicionamiento en buscadores (SEO)
 

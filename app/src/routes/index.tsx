@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Comparador } from "../components/dp/comparador";
-import { Encabezado, Parrillas, Pie, Ubicacion } from "../components/dp/secciones";
-import { Taller } from "../components/dp/taller";
+import { ComoComprar } from "../components/dp/como-comprar";
+import { Encabezado, Pie, Ubicacion } from "../components/dp/secciones";
 import { Vitrina } from "../components/dp/vitrina";
 import { obtenerCatalogo } from "../lib/catalogo.functions";
 import { ldNegocio } from "../lib/seo";
@@ -36,8 +36,7 @@ function Index() {
       <main>
         <Vitrina productos={productos} />
         <Comparador productos={productos} />
-        <Taller />
-        <Parrillas />
+        <ComoComprar />
         <Ubicacion />
       </main>
       <Pie />

@@ -27,7 +27,7 @@ export function ldNegocio(productos: Producto[]) {
     image: `${SITE_URL}/og.png`,
     telephone: `+${NEGOCIO.whatsapp}`,
     description:
-      "Casa de pesca y camping en Los Cóndores, Calamuchita: reels, cañas y accesorios, taller de reparación de cañas y parrillas a pedido.",
+      "Casa de pesca y camping en Los Cóndores, Calamuchita: reels, cañas y accesorios de pesca.",
     address: {
       "@type": "PostalAddress",
       addressLocality: NEGOCIO.localidad,
@@ -38,10 +38,6 @@ export function ldNegocio(productos: Producto[]) {
     geo: { "@type": "GeoCoordinates", latitude: NEGOCIO.lat, longitude: NEGOCIO.lon },
     areaServed: "Calamuchita, Córdoba",
     sameAs: [ENLACE_INSTAGRAM],
-    makesOffer: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Reparación de cañas de pescar" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Parrillas a pedido" } },
-    ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Equipos de pesca",

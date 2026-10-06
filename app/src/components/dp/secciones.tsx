@@ -16,8 +16,7 @@ const LINKEDIN_AUTOR = "https://www.linkedin.com/in/gonzalo-arg%C3%BCello/";
 
 const ANCLAS = [
   { href: "/#comparador", texto: "Equipos" },
-  { href: "/#taller", texto: "Taller" },
-  { href: "/#parrillas", texto: "Parrillas" },
+  { href: "/#como-comprar", texto: "Cómo comprar" },
   { href: "/#ubicacion", texto: "Ubicación" },
 ];
 
@@ -61,42 +60,6 @@ export function Encabezado() {
         </a>
       </div>
     </header>
-  );
-}
-
-export function Parrillas() {
-  return (
-    <section id="parrillas" aria-labelledby="titulo-parrillas" className="banda-dp scroll-mt-16">
-      <img
-        src={imagen("/assets/fotos/parrilla-sierras.jpg", 828)}
-        alt="Parrilla de hierro sobre piso de piedra frente a las sierras"
-        width={640}
-        height={492}
-        loading="lazy"
-        decoding="async"
-        className="banda-dp__foto"
-      />
-      <div className="banda-dp__velo" aria-hidden="true" />
-      <div className="relative mx-auto flex min-h-[460px] max-w-[1280px] items-center px-4 py-16 md:min-h-[520px] md:px-8">
-        <div className="max-w-[480px]">
-          <h2 id="titulo-parrillas" className="cond text-5xl leading-[0.9] md:text-7xl">
-            Parrillas a pedido
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-white/85">
-            Se fabrican únicamente a pedido. Pasanos la medida de tu asador o la de la parrilla que
-            querés.
-          </p>
-          <a
-            href={enlaceWhatsapp("Hola Willy, quiero consultar por una parrilla a pedido.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cta-parrilla-dp mt-8"
-          >
-            Pedir parrilla
-          </a>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -207,7 +170,7 @@ export function Pie() {
           className="h-auto w-[260px] md:w-[320px]"
         />
         <p className="mt-6 max-w-[40ch] text-sm leading-relaxed text-white/70">
-          Reels, cañas, taller y parrillas a pedido en{" "}
+          Reels, cañas y accesorios de pesca en{" "}
           <span className="whitespace-nowrap">
             {NEGOCIO.localidad}, {NEGOCIO.provincia}.
           </span>

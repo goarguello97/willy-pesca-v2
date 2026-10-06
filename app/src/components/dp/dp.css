@@ -335,175 +335,84 @@
     }
   }
 
-  /* Taller */
-  .foto-taller-dp {
-    position: relative;
-    border: 1px solid var(--color-tinta);
-    overflow: hidden;
-    background: var(--color-tinta);
-  }
-  .foto-taller-dp img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-  }
-  .orden {
-    background: var(--color-tarjeta);
-    border: 1px solid var(--color-filete);
-    box-shadow: 0 30px 60px -40px rgb(12 20 36 / 0.4);
-  }
-  .orden__cabeza {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 22px;
-    background: var(--color-tinta);
-    color: #fff;
-  }
-  .chip-arreglo {
-    cursor: pointer;
-  }
-  .chip-arreglo span {
-    display: inline-block;
-    padding: 9px 14px;
-    border: 1.5px solid var(--color-filete);
-    background: var(--color-blanco);
-    font-weight: 500;
-    transition:
-      border-color 120ms ease,
-      background-color 120ms ease,
-      color 120ms ease;
-  }
-  .chip-arreglo:hover span {
-    border-color: var(--color-tinta);
-  }
-  .chip-arreglo input:checked + span {
-    background: var(--color-cobalto);
-    border-color: var(--color-cobalto);
-    color: #fff;
-  }
-  .chip-arreglo input:focus-visible + span {
-    outline: 2px solid var(--color-cobalto);
-    outline-offset: 2px;
-  }
-  .campo-dp {
-    display: block;
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--color-blanco);
-    border: 1.5px solid var(--color-filete);
-    color: var(--color-tinta);
-    font-size: 16px;
-  }
-  .campo-dp::placeholder {
-    color: var(--color-gris);
-  }
-  .campo-dp:hover {
-    border-color: var(--color-gris);
-  }
-  .campo-dp:focus {
-    outline: none;
-    border-color: var(--color-cobalto);
-    box-shadow: inset 0 -3px 0 var(--color-cobalto);
-  }
-  .campo-dp[aria-invalid="true"] {
-    border-color: var(--color-error);
-  }
-  .boton-arreglo {
-    display: flex;
-    width: 100%;
-    align-items: stretch;
-    height: 60px;
-    background: var(--color-tinta);
-    color: #fff;
-    transition: transform 120ms ease;
-  }
-  .boton-arreglo span:first-child {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding-inline: 22px;
-  }
-  .boton-arreglo span:last-child {
-    display: grid;
-    place-items: center;
-    width: 72px;
-    background: var(--color-cobalto);
-    clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%);
-  }
-  .boton-arreglo svg {
-    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .boton-arreglo:hover svg {
-    transform: translateX(6px);
-  }
-  .boton-arreglo:active {
-    transform: scale(0.985);
-  }
-
-  /* Parrillas */
-  .banda-dp {
+  /* Cómo comprar */
+  .pasos-dp {
     position: relative;
     overflow: hidden;
     background: var(--color-tinta);
     color: #fff;
   }
-  .banda-dp__foto {
+  .pasos-dp::before {
+    content: "";
     position: absolute;
-    inset: 0;
-    width: 100%;
+    top: 0;
+    right: -8%;
+    width: 16%;
     height: 100%;
-    object-fit: cover;
-    object-position: 50% 30%;
+    background: var(--color-cobalto);
+    transform: skewX(-14deg);
   }
-  .banda-dp__velo {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(0deg, rgb(12 20 36 / 0.94) 0%, rgb(12 20 36 / 0.6) 55%, rgb(12 20 36 / 0.2) 100%);
+  .pasos {
+    display: grid;
+    gap: 40px;
   }
-  @media (min-width: 768px) {
-    .banda-dp__foto {
-      left: auto;
-      width: min(58%, 840px);
-      clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
-    }
-    .banda-dp__velo {
-      display: none;
-    }
-  }
-  .cta-parrilla-dp {
+  .paso {
     position: relative;
-    display: inline-block;
-    padding: 6px 2px 12px;
+    padding-top: 28px;
+    border-top: 2px solid rgb(255 255 255 / 0.18);
+  }
+  .paso::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 56px;
+    height: 2px;
+    background: var(--color-cobalto-claro);
+  }
+  .paso__numero {
+    display: block;
+    margin-bottom: 18px;
     font-family: var(--font-cond);
     font-style: italic;
     font-weight: 800;
-    font-size: 26px;
-    text-transform: uppercase;
+    font-size: 76px;
+    line-height: 0.8;
+    color: var(--color-cobalto-claro);
+  }
+  .paso p {
+    margin-top: 12px;
+    max-width: 34ch;
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.78);
+  }
+  .paso__enlace {
+    display: inline-flex;
+    margin-top: 18px;
+    font-family: var(--font-dpmono);
+    font-size: 14px;
     color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    text-decoration-color: var(--color-cobalto-claro);
   }
-  .cta-parrilla-dp::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 6px;
-    background: var(--color-cobalto);
-    transform: skewX(-14deg);
-    transform-origin: left;
-    transition: height 200ms ease;
+  .paso__enlace:hover {
+    text-decoration-thickness: 2px;
   }
-  .cta-parrilla-dp:hover::after {
-    height: 100%;
-    z-index: -1;
+  /* En pantallas angostas la franja quedaría detrás del texto. */
+  @media (max-width: 899px) {
+    .pasos-dp::before {
+      display: none;
+    }
   }
-  .cta-parrilla-dp {
-    isolation: isolate;
-  }
-  .cta-parrilla-dp::after {
-    z-index: -1;
+  @media (min-width: 900px) {
+    .pasos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+    }
+    .paso {
+      padding-right: 40px;
+    }
   }
 
   /* Ubicación */
@@ -589,6 +498,29 @@
 
 @layer components {
   /* Panel de administración */
+  .campo-dp {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--color-blanco);
+    border: 1.5px solid var(--color-filete);
+    color: var(--color-tinta);
+    font-size: 16px;
+  }
+  .campo-dp::placeholder {
+    color: var(--color-gris);
+  }
+  .campo-dp:hover {
+    border-color: var(--color-gris);
+  }
+  .campo-dp:focus {
+    outline: none;
+    border-color: var(--color-cobalto);
+    box-shadow: inset 0 -3px 0 var(--color-cobalto);
+  }
+  .campo-dp[aria-invalid="true"] {
+    border-color: var(--color-error);
+  }
   .boton-admin {
     display: inline-flex;
     align-items: center;
@@ -690,9 +622,7 @@
   .tira__boton,
   .cta-stock,
   .consultar-fila svg,
-  .boton-arreglo svg,
-  .como-llegar-dp svg,
-  .cta-parrilla-dp::after {
+  .como-llegar-dp svg {
     transition: none;
   }
   .tira__boton:hover {
