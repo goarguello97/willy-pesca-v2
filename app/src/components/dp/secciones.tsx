@@ -16,6 +16,7 @@ const LINKEDIN_AUTOR = "https://www.linkedin.com/in/gonzalo-arg%C3%BCello/";
 
 const ANCLAS = [
   { href: "/#comparador", texto: "Equipos" },
+  { href: "/#camping", texto: "Camping" },
   { href: "/#como-comprar", texto: "Cómo comprar" },
   { href: "/#ubicacion", texto: "Ubicación" },
 ];

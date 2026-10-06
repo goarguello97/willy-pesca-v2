@@ -306,7 +306,7 @@ export function EditorProducto({ id }: { id: string }) {
               />
             )}
           </Campo>
-          <Campo etiqueta="Descripción" ayuda="Opcional. Se muestra en el comparador para accesorios y camping.">
+          <Campo etiqueta="Descripción" ayuda="Opcional. Se muestra en la página del producto (y en el comparador para accesorios).">
             {(idc, desc) => (
               <textarea
                 id={idc}

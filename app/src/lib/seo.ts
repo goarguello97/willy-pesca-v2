@@ -3,6 +3,7 @@
 import {
   NOMBRE_CATEGORIA,
   filasFicha,
+  seccionDeProducto,
   formatearPrecio,
   fotoPrincipal,
   textoAlternativo,
@@ -92,7 +93,12 @@ export function ldMigas(p: Producto) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITE_URL}/` },
-      { "@type": "ListItem", position: 2, name: "Equipos", item: `${SITE_URL}/#comparador` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: p.categoria === "camping" ? "Camping" : "Equipos",
+        item: `${SITE_URL}${seccionDeProducto(p)}`,
+      },
       { "@type": "ListItem", position: 3, name: textoAlternativo(p), item: absoluta(urlProducto(p)) },
     ],
   };

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Comparador } from "../components/dp/comparador";
+import { Camping } from "../components/dp/camping";
 import { ComoComprar } from "../components/dp/como-comprar";
 import { Encabezado, Pie, Ubicacion } from "../components/dp/secciones";
 import { Vitrina } from "../components/dp/vitrina";
@@ -36,6 +37,7 @@ function Index() {
       <main>
         <Vitrina productos={productos} />
         <Comparador productos={productos} />
+        <Camping productos={productos} />
         <ComoComprar />
         <Ubicacion />
       </main>

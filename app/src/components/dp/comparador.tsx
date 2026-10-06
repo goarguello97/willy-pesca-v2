@@ -37,7 +37,10 @@ const COLUMNAS: Record<Categoria, Columna[]> = {
 const PRECIO: Columna = { titulo: "Precio", valor: (p) => formatearPrecio(p.precio) ?? "Consultar" };
 
 export function Comparador({ productos }: { productos: Producto[] }) {
-  const pestanas = CATEGORIAS.filter((c) => productos.some((p) => p.categoria === c.valor));
+  // Camping tiene su propia sección; acá van solo los equipos de pesca.
+  const pestanas = CATEGORIAS.filter(
+    (c) => c.valor !== "camping" && productos.some((p) => p.categoria === c.valor),
+  );
   const [elegida, setElegida] = useState<Categoria | null>(null);
   const cat = pestanas.find((t) => t.valor === elegida)?.valor ?? pestanas[0]?.valor;
   const base = useId();

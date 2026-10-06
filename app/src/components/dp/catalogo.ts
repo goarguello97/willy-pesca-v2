@@ -111,6 +111,9 @@ export const coincideHuella = (p: Producto, slug: string) => huella(p.id) === hu
 
 export const urlProducto = (p: Producto) => `/producto/${slugProducto(p)}`;
 
+// Sección de la portada donde se lista cada producto.
+export const seccionDeProducto = (p: Producto) => (p.categoria === "camping" ? "/#camping" : "/#comparador");
+
 // En Vercel las fotos pasan por su optimizador: tamaño justo y AVIF/WebP.
 type Ancho = AnchoImagen;
 const OPTIMIZAR = import.meta.env.VITE_IMAGENES_VERCEL === "1";

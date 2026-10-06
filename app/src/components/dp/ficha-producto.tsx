@@ -8,6 +8,7 @@ import {
   fotoPrincipal,
   imagen,
   mensajeConsulta,
+  seccionDeProducto,
   srcsetImagen,
   textoAlternativo,
   tituloProducto,
@@ -43,7 +44,7 @@ export function FichaProducto({ producto: p, relacionados }: { producto: Product
               </li>
               <li aria-hidden="true">/</li>
               <li>
-                <a href="/#comparador" className="underline-offset-4 hover:underline">
+                <a href={seccionDeProducto(p)} className="underline-offset-4 hover:underline">
                   {plural(p)}
                 </a>
               </li>
@@ -87,8 +88,8 @@ export function FichaProducto({ producto: p, relacionados }: { producto: Product
                 >
                   Consultá stock
                 </a>
-                <a href="/#comparador" className="enlace-comparar">
-                  Comparar con otros equipos
+                <a href={seccionDeProducto(p)} className="enlace-comparar">
+                  {p.categoria === "camping" ? "Ver más de camping" : "Comparar con otros equipos"}
                 </a>
               </div>
             </div>
@@ -156,13 +157,13 @@ function Galeria({ producto: p }: { producto: Producto }) {
   );
 }
 
-function Tarjeta({ producto: p }: { producto: Producto }) {
+export function Tarjeta({ producto: p }: { producto: Producto }) {
   const foto = fotoPrincipal(p);
   return (
     <Link
       to="/producto/$slug"
       params={{ slug: urlProducto(p).replace("/producto/", "") }}
-      className="group block border border-filete bg-tarjeta"
+      className="group flex h-full flex-col border border-filete bg-tarjeta"
     >
       {foto ? (
         <img
@@ -177,7 +178,7 @@ function Tarjeta({ producto: p }: { producto: Producto }) {
       ) : (
         <span className="block aspect-square w-full bg-blanco" aria-hidden="true" />
       )}
-      <span className="flex items-center justify-between gap-3 border-t border-filete px-3 py-3">
+      <span className="flex flex-1 items-center justify-between gap-3 border-t border-filete px-3 py-3">
         <span className="min-w-0">
           <span className="cond line-clamp-2 block text-xl leading-none group-hover:underline">
             {tituloProducto(p)}
