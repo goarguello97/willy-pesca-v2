@@ -10,7 +10,7 @@ import {
   enlaceWhatsapp,
 } from "./datos";
 import { LogoWilly } from "./logo-willy";
-import { Flecha, GlifoInstagram, GlifoWhatsapp } from "./marca";
+import { Flecha, GlifoInstagram, GlifoWhatsapp, LogoMetalico } from "./marca";
 
 // Crédito de diseño del sitio.
 const LINKEDIN_AUTOR = "https://www.linkedin.com/in/gonzalo-arg%C3%BCello/";
@@ -164,13 +164,7 @@ export function Pie({ menu }: { menu: Menu }) {
   return (
     <footer className="pie-dp bg-tinta text-white">
       <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 pb-10 pt-16 text-center md:px-8 md:pt-20">
-        <LogoWilly
-          centrado
-          figura="#ffffff"
-          fondo="#0c1424"
-          titulo="Willy Pesca y Camping"
-          className="h-auto w-[260px] md:w-[320px]"
-        />
+        <LogoMetalico estilo="fundido" className="w-[280px] md:w-[360px]" />
         <p className="mt-6 max-w-[40ch] text-sm leading-relaxed text-white/70">
           Reels, cañas y accesorios de pesca en{" "}
           <span className="whitespace-nowrap">

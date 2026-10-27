@@ -23,6 +23,33 @@ export function Isotipo({ className }: { className?: string }) {
   );
 }
 
+// Logo metálico oficial (marca/willy-pesca-metalico.png). Solo en tamaño grande:
+// a menos de ~200 px se vuelve una mancha; ahí va LogoWilly.
+// "placa": el logo con su fondo texturado, para fondos claros.
+// "fundido": sobre la tinta; usa una copia con el fondo llevado a negro puro,
+// que desaparece con mix-blend-mode: screen.
+export function LogoMetalico({
+  estilo,
+  className,
+  prioridad = false,
+}: {
+  estilo: "placa" | "fundido";
+  className?: string;
+  prioridad?: boolean;
+}) {
+  return (
+    <img
+      src={estilo === "placa" ? "/marca/willy-pesca-metalico.webp" : "/marca/willy-pesca-metalico-fundido.webp"}
+      alt="Willy Pesca y Camping, artículos de pesca y camping"
+      width={673}
+      height={476}
+      loading={prioridad ? "eager" : "lazy"}
+      decoding="async"
+      className={`logo-metalico logo-metalico--${estilo} ${className ?? ""}`}
+    />
+  );
+}
+
 export function Marca({ className }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>

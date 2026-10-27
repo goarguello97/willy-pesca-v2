@@ -26,7 +26,7 @@ export function ldNegocio(productos: Producto[]) {
     name: NEGOCIO.nombre,
     url: `${SITE_URL}/`,
     logo: `${SITE_URL}/icon-512.png`,
-    image: `${SITE_URL}/og.png`,
+    image: `${SITE_URL}/og-marca.png`,
     telephone: `+${NEGOCIO.whatsapp}`,
     description:
       "Casa de pesca y camping en Los Cóndores, Calamuchita: reels, cañas y accesorios de pesca.",
