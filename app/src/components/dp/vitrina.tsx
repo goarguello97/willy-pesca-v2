@@ -34,7 +34,7 @@ export function Vitrina({ productos }: { productos: Producto[] }) {
     <section id="inicio" aria-labelledby="titulo-vitrina" className="overflow-hidden border-b border-filete">
       <div className="mx-auto grid max-w-[1280px] items-center gap-14 px-4 pb-16 pt-12 md:px-8 lg:grid-cols-2 lg:gap-10 lg:pb-20 lg:pt-16">
         <div className="min-w-0">
-          <LogoMetalico estilo="placa" prioridad className="mb-8 w-[240px] sm:w-[300px] lg:mb-10" />
+          <LogoMetalico estilo="recortado" prioridad className="mb-6 w-[260px] sm:w-[340px] lg:mb-8" />
           <h1 id="titulo-vitrina">
             <span className="mb-4 block font-dpmono text-sm font-medium text-cobalto">
               Casa de pesca y camping en Los Cóndores, Córdoba
