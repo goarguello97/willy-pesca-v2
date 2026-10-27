@@ -3,8 +3,8 @@ import { ENLACE_COMO_LLEGAR, enlaceWhatsapp } from "./datos";
 const PASOS = [
   {
     titulo: "Elegí tu equipo",
-    texto: "Mirá la vitrina y el comparador: cada equipo tiene su ficha técnica y fotos reales.",
-    enlace: { texto: "Ver equipos", href: "/#comparador", externo: false },
+    texto: "Buscá en el catálogo o recorré las categorías: cada producto tiene su ficha y fotos reales.",
+    enlace: { texto: "Ver el catálogo", href: "/#catalogo", externo: false },
   },
   {
     titulo: "Consultá por WhatsApp",

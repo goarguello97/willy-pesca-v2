@@ -3,7 +3,7 @@ import { fotoPrincipal, textoAlternativo, urlProducto } from "../components/dp/c
 import { FichaProducto } from "../components/dp/ficha-producto";
 import { Encabezado, Pie } from "../components/dp/secciones";
 import { obtenerProducto } from "../lib/catalogo.functions";
-import { absoluta, descripcionProducto, ldMigas, ldProducto } from "../lib/seo";
+import { absoluta, descripcionProducto, ldMigas, ldProducto, migasProducto } from "../lib/seo";
 import { SITE_URL } from "../lib/sitio";
 
 export const Route = createFileRoute("/producto/$slug")({
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/producto/$slug")({
             ]
           : []),
         { "script:ld+json": ldProducto(p) },
-        { "script:ld+json": ldMigas(p) },
+        { "script:ld+json": ldMigas(migasProducto(p)) },
       ],
       links: [{ rel: "canonical", href: url }],
     };
@@ -43,14 +43,14 @@ export const Route = createFileRoute("/producto/$slug")({
 });
 
 function PaginaProducto() {
-  const { producto, relacionados } = Route.useLoaderData();
+  const { producto, relacionados, menu } = Route.useLoaderData();
   return (
     <>
-      <Encabezado />
+      <Encabezado menu={menu} />
       <main>
         <FichaProducto producto={producto} relacionados={relacionados} />
       </main>
-      <Pie />
+      <Pie menu={menu} />
     </>
   );
 }

@@ -18,6 +18,9 @@ En SQL Editor:
 2. Abrir `02_datos_iniciales.sql`, reemplazar los dos mails por las cuentas de
    Google de los administradores y correrlo. Carga también los 10 equipos que
    ya mostraba el sitio.
+3. Correr `03_categorias.sql`: crea las categorías en dos niveles (Pesca ›
+   Reels, Camping › Carpas…) y pasa cada producto a su subcategoría. Se
+   administran desde el panel, en **Categorías**.
 
 Para sumar otro administrador más adelante:
 

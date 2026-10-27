@@ -1,13 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
-  CATEGORIAS,
   SELECT_PRODUCTO,
+  armarArbol,
   desdeFila,
   formatearPrecio,
   type Categoria,
   type FilaProducto,
 } from "../dp/catalogo";
+import { leerCategorias } from "./categorias";
 import { MAXIMO_FOTOS, borrarArchivos, subirImagen } from "./imagenes";
 import { useSesion } from "./sesion";
 
@@ -16,7 +17,7 @@ type Foto =
   | { tipo: "nueva"; clave: string; archivo: File; vista: string };
 
 type Formulario = {
-  categoria: Categoria;
+  categoriaId: string;
   marca: string;
   nombre: string;
   precio: string;
@@ -30,7 +31,7 @@ type Formulario = {
 };
 
 const VACIO: Formulario = {
-  categoria: "reel",
+  categoriaId: "",
   marca: "",
   nombre: "",
   precio: "",
@@ -72,29 +73,37 @@ export function EditorProducto({ id }: { id: string }) {
   const [form, setForm] = useState<Formulario>(VACIO);
   const [fotos, setFotos] = useState<Foto[]>([]);
   const [quitadas, setQuitadas] = useState<Array<{ id: string; ruta: string | null }>>([]);
-  const [cargando, setCargando] = useState(!nuevo);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState<string | null>(null);
   const [errores, setErrores] = useState<Partial<Record<keyof Formulario | "fotos" | "general", string>>>({});
   const vistas = useRef<string[]>([]);
 
   useEffect(() => {
-    if (nuevo) return;
     let vivo = true;
-    sb.from("productos")
-      .select(SELECT_PRODUCTO)
-      .eq("id", id)
-      .returns<FilaProducto[]>()
-      .maybeSingle()
-      .then(({ data, error }) => {
+    (async () => {
+      try {
+        const cats = await leerCategorias(sb);
         if (!vivo) return;
-        setCargando(false);
-        if (error || !data) {
-          setErrores({ general: error ? error.message : "No existe ese producto." });
+        setCategorias(cats);
+        if (nuevo) {
+          // Arranca en la primera subcategoría (Pesca › Reels).
+          const primera = armarArbol(cats).flatMap((m) => m.hijas)[0];
+          setForm((f) => ({ ...f, categoriaId: primera?.id ?? "" }));
           return;
         }
-        const p = desdeFila(data as unknown as FilaProducto);
+        const { data, error } = await sb
+          .from("productos")
+          .select(SELECT_PRODUCTO)
+          .eq("id", id)
+          .returns<FilaProducto[]>()
+          .maybeSingle();
+        if (!vivo) return;
+        if (error || !data) throw new Error(error ? error.message : "No existe ese producto.");
+        const p = desdeFila(data as unknown as FilaProducto, cats);
+        if (!p) throw new Error("La categoría de este producto ya no existe.");
         setForm({
-          categoria: p.categoria,
+          categoriaId: p.categoria.id,
           marca: p.marca ?? "",
           nombre: p.nombre,
           precio: p.precio === null ? "" : String(p.precio).replace(".", ","),
@@ -107,7 +116,12 @@ export function EditorProducto({ id }: { id: string }) {
           publicado: p.publicado,
         });
         setFotos(p.imagenes.map((i) => ({ tipo: "guardada", id: i.id, url: i.url, ruta: i.ruta })));
-      });
+      } catch (e) {
+        if (vivo) setErrores({ general: (e as Error).message });
+      } finally {
+        if (vivo) setCargando(false);
+      }
+    })();
     return () => {
       vivo = false;
     };
@@ -115,6 +129,10 @@ export function EditorProducto({ id }: { id: string }) {
 
   // Libera las vistas previas locales al salir.
   useEffect(() => () => vistas.current.forEach((u) => URL.revokeObjectURL(u)), []);
+
+  // La ficha técnica (reel o caña) la define la subcategoría elegida.
+  const ficha = categorias.find((c) => c.id === form.categoriaId)?.ficha ?? null;
+  const arbol = armarArbol(categorias);
 
   const campo = <K extends keyof Formulario>(k: K, v: Formulario[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -156,23 +174,24 @@ export function EditorProducto({ id }: { id: string }) {
     const rulemanes = leerEntero(form.rulemanes);
     const largo = leerLargo(form.largo);
     const errs: typeof errores = {};
+    if (!form.categoriaId) errs.categoriaId = "Elegí una categoría.";
     if (!form.nombre.trim()) errs.nombre = "Poné el nombre o modelo.";
     if (precio === "invalido") errs.precio = "Escribí solo números, por ejemplo 45000.";
-    if (form.categoria === "reel" && rulemanes === "invalido") errs.rulemanes = "Tiene que ser un número entero.";
-    if (form.categoria === "cana" && largo === "invalido") errs.largo = "Escribí el largo en metros, por ejemplo 2,40.";
+    if (ficha === "reel" && rulemanes === "invalido") errs.rulemanes = "Tiene que ser un número entero.";
+    if (ficha === "cana" && largo === "invalido") errs.largo = "Escribí el largo en metros, por ejemplo 2,40.";
     setErrores(errs);
     if (Object.keys(errs).length) return;
 
     const fila = {
-      categoria: form.categoria,
+      categoria_id: form.categoriaId,
       marca: form.marca.trim() || null,
       nombre: form.nombre.trim(),
       precio: precio as number | null,
       descripcion: form.descripcion.trim() || null,
-      reel_tipo: form.categoria === "reel" ? form.reelTipo.trim() || null : null,
-      rulemanes: form.categoria === "reel" ? (rulemanes as number | null) : null,
-      largo_m: form.categoria === "cana" ? (largo as number | null) : null,
-      cana_armado: form.categoria === "cana" ? form.canaArmado.trim() || null : null,
+      reel_tipo: ficha === "reel" ? form.reelTipo.trim() || null : null,
+      rulemanes: ficha === "reel" ? (rulemanes as number | null) : null,
+      largo_m: ficha === "cana" ? (largo as number | null) : null,
+      cana_armado: ficha === "cana" ? form.canaArmado.trim() || null : null,
       destacado: form.destacado,
       publicado: form.publicado,
     };
@@ -249,18 +268,30 @@ export function EditorProducto({ id }: { id: string }) {
         ) : null}
 
         <Seccion titulo="Datos">
-          <Campo etiqueta="Categoría">
-            {(idc) => (
+          <Campo
+            etiqueta="Categoría"
+            error={errores.categoriaId}
+            ayuda="Categoría madre y subcategoría. Se editan en la sección Categorías."
+          >
+            {(idc, desc) => (
               <select
                 id={idc}
-                value={form.categoria}
-                onChange={(e) => campo("categoria", e.target.value as Categoria)}
+                value={form.categoriaId}
+                onChange={(e) => campo("categoriaId", e.target.value)}
+                aria-invalid={errores.categoriaId ? true : undefined}
+                aria-describedby={desc}
                 className="campo-dp"
               >
-                {CATEGORIAS.map((c) => (
-                  <option key={c.valor} value={c.valor}>
-                    {c.singular}
-                  </option>
+                {form.categoriaId ? null : <option value="">Elegí una categoría</option>}
+                {arbol.map((m) => (
+                  <optgroup key={m.id} label={m.visible ? m.nombre : `${m.nombre} (oculta)`}>
+                    {m.hijas.map((h) => (
+                      <option key={h.id} value={h.id}>
+                        {m.nombre} › {h.nombre}
+                        {h.visible ? "" : " (oculta)"}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
             )}
@@ -306,7 +337,7 @@ export function EditorProducto({ id }: { id: string }) {
               />
             )}
           </Campo>
-          <Campo etiqueta="Descripción" ayuda="Opcional. Se muestra en la página del producto (y en el comparador para accesorios).">
+          <Campo etiqueta="Descripción" ayuda="Opcional. Se muestra en la página del producto.">
             {(idc, desc) => (
               <textarea
                 id={idc}
@@ -320,7 +351,7 @@ export function EditorProducto({ id }: { id: string }) {
           </Campo>
         </Seccion>
 
-        {form.categoria === "reel" ? (
+        {ficha === "reel" ? (
           <Seccion titulo="Ficha técnica">
             <div className="grid gap-5 sm:grid-cols-2">
               <Campo etiqueta="Tipo" ayuda="Ej.: frontal, rotativo">
@@ -359,7 +390,7 @@ export function EditorProducto({ id }: { id: string }) {
           </Seccion>
         ) : null}
 
-        {form.categoria === "cana" ? (
+        {ficha === "cana" ? (
           <Seccion titulo="Ficha técnica">
             <div className="grid gap-5 sm:grid-cols-2">
               <Campo etiqueta="Largo (metros)" error={errores.largo} ayuda="Ej.: 2,40">

@@ -1,16 +1,17 @@
 // Datos estructurados (JSON-LD) y descripciones para buscadores. TanStack los
 // inserta con meta { "script:ld+json": ... } y se encarga de escaparlos.
 import {
-  NOMBRE_CATEGORIA,
   filasFicha,
-  seccionDeProducto,
   formatearPrecio,
   fotoPrincipal,
   textoAlternativo,
+  urlCategoria,
   urlProducto,
+  type Categoria,
   type Producto,
 } from "../components/dp/catalogo";
 import { ENLACE_INSTAGRAM, NEGOCIO } from "../components/dp/datos";
+import type { PaginaCategoria } from "./catalogo.functions";
 import { SITE_URL } from "./sitio";
 
 export const absoluta = (url: string) => (url.startsWith("/") ? `${SITE_URL}${url}` : url);
@@ -41,7 +42,7 @@ export function ldNegocio(productos: Producto[]) {
     sameAs: [ENLACE_INSTAGRAM],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: "Equipos de pesca",
+      name: "Pesca y camping",
       itemListElement: productos.map((p) => {
         const foto = fotoPrincipal(p);
         return {
@@ -67,7 +68,7 @@ export function ldProducto(p: Producto) {
     name: textoAlternativo(p),
     description: descripcionProducto(p),
     url,
-    category: NOMBRE_CATEGORIA[p.categoria],
+    category: `${p.madre.nombre} > ${p.categoria.nombre}`,
     image: p.imagenes.map((i) => absoluta(i.url)),
     ...(p.marca ? { brand: { "@type": "Brand", name: p.marca } } : {}),
     additionalProperty: filasFicha(p)
@@ -87,21 +88,62 @@ export function ldProducto(p: Producto) {
   };
 }
 
-export function ldMigas(p: Producto) {
+type Miga = { nombre: string; url: string };
+
+// Migas de pan: Inicio › Pesca › Cañas › producto.
+export function ldMigas(migas: Miga[]) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITE_URL}/` },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: p.categoria === "camping" ? "Camping" : "Equipos",
-        item: `${SITE_URL}${seccionDeProducto(p)}`,
-      },
-      { "@type": "ListItem", position: 3, name: textoAlternativo(p), item: absoluta(urlProducto(p)) },
-    ],
+    itemListElement: [{ nombre: "Inicio", url: "/" }, ...migas].map((m, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: m.nombre,
+      item: absoluta(m.url),
+    })),
   };
+}
+
+export const migasProducto = (p: Producto): Miga[] => [
+  { nombre: p.madre.nombre, url: urlCategoria(p.madre) },
+  { nombre: p.categoria.nombre, url: urlCategoria(p.madre, p.categoria) },
+  { nombre: textoAlternativo(p), url: urlProducto(p) },
+];
+
+export const migasCategoria = (madre: Categoria, sub: Categoria | null): Miga[] => [
+  { nombre: madre.nombre, url: urlCategoria(madre) },
+  ...(sub ? [{ nombre: sub.nombre, url: urlCategoria(madre, sub) }] : []),
+];
+
+// Listado de una página de categoría.
+export function ldListado(nombre: string, url: string, productos: Producto[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: nombre,
+    url: absoluta(url),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: productos.length,
+      itemListElement: productos.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: absoluta(urlProducto(p)),
+        name: textoAlternativo(p),
+      })),
+    },
+  };
+}
+
+// Título y descripción de /pesca y /pesca/canas.
+export function textosCategoria(madre: Categoria, sub: Categoria | null, cantidad: number) {
+  const zona = "en Los Cóndores, Córdoba";
+  const cosa = sub ? `${sub.nombre} de ${madre.nombre.toLowerCase()}` : `Artículos de ${madre.nombre.toLowerCase()}`;
+  const propia = (sub ?? madre).descripcion?.trim();
+  const descripcion =
+    propia ||
+    `${cosa} ${zona}: ${cantidad === 1 ? "1 producto" : `${cantidad} productos`} con fotos y ficha. Consultá precio y stock por WhatsApp.`;
+  return { titulo: `${cosa} ${zona} | Willy Pesca y Camping`, descripcion };
 }
 
 // Descripción para Google y redes: la del producto o una armada con su ficha.
@@ -120,4 +162,25 @@ export function descripcionProducto(p: Producto): string {
     precio ? `Precio: ${precio}.` : "Consultá precio y stock por WhatsApp.",
     `Willy Pesca y Camping, ${NEGOCIO.localidad}, ${NEGOCIO.provincia}.`,
   ].join(" ");
+}
+
+// <head> de /pesca y /pesca/canas. Sin productos no se indexa.
+export function headCategoria({ madre, sub, productos }: PaginaCategoria) {
+  const url = absoluta(urlCategoria(madre, sub));
+  const { titulo, descripcion } = textosCategoria(madre, sub, productos.length);
+  return {
+    meta: [
+      { title: titulo },
+      { name: "description", content: descripcion },
+      ...(productos.length ? [] : [{ name: "robots", content: "noindex, follow" }]),
+      { property: "og:title", content: titulo },
+      { property: "og:description", content: descripcion },
+      { property: "og:url", content: url },
+      { name: "twitter:title", content: titulo },
+      { name: "twitter:description", content: descripcion },
+      { "script:ld+json": ldMigas(migasCategoria(madre, sub)) },
+      { "script:ld+json": ldListado((sub ?? madre).nombre, url, productos) },
+    ],
+    links: [{ rel: "canonical", href: url }],
+  };
 }

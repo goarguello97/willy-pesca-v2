@@ -1,8 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  CATEGORIAS,
-  NOMBRE_CATEGORIA,
   filasFicha,
   formatearPrecio,
   fotoPrincipal,
@@ -12,22 +10,12 @@ import {
   srcsetImagen,
   textoAlternativo,
   tituloProducto,
+  urlCategoria,
   urlProducto,
   type Producto,
 } from "./catalogo";
 import { enlaceWhatsapp } from "./datos";
 import { Flecha } from "./marca";
-
-const plural = (p: Producto) => CATEGORIAS.find((c) => c.valor === p.categoria)?.plural ?? "Equipos";
-
-// Título de "relacionados" con el género de cada categoría.
-const OTROS: Record<Producto["categoria"], string> = {
-  reel: "Otros reels",
-  cana: "Otras cañas",
-  accesorio: "Otros accesorios",
-  camping: "Más para camping",
-  otro: "Otros productos",
-};
 
 export function FichaProducto({ producto: p, relacionados }: { producto: Producto; relacionados: Producto[] }) {
   const precio = formatearPrecio(p.precio);
@@ -44,8 +32,14 @@ export function FichaProducto({ producto: p, relacionados }: { producto: Product
               </li>
               <li aria-hidden="true">/</li>
               <li>
+                <a href={urlCategoria(p.madre)} className="underline-offset-4 hover:underline">
+                  {p.madre.nombre}
+                </a>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li>
                 <a href={seccionDeProducto(p)} className="underline-offset-4 hover:underline">
-                  {plural(p)}
+                  {p.categoria.nombre}
                 </a>
               </li>
               <li aria-hidden="true">/</li>
@@ -58,7 +52,7 @@ export function FichaProducto({ producto: p, relacionados }: { producto: Product
           <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
             <Galeria producto={p} />
             <div className="min-w-0">
-              <p className="font-dpmono text-sm text-cobalto">{NOMBRE_CATEGORIA[p.categoria]}</p>
+              <p className="font-dpmono text-sm text-cobalto">{p.categoria.singular ?? p.categoria.nombre}</p>
               <h1 id="titulo-producto" className="cond mt-2 text-5xl leading-[0.9] md:text-7xl">
                 {tituloProducto(p)}
               </h1>
@@ -89,7 +83,7 @@ export function FichaProducto({ producto: p, relacionados }: { producto: Product
                   Consultá stock
                 </a>
                 <a href={seccionDeProducto(p)} className="enlace-comparar">
-                  {p.categoria === "camping" ? "Ver más de camping" : "Comparar con otros equipos"}
+                  {p.categoria.ficha ? `Comparar ${p.categoria.nombre.toLowerCase()}` : `Ver todo en ${p.categoria.nombre}`}
                 </a>
               </div>
             </div>
@@ -101,7 +95,7 @@ export function FichaProducto({ producto: p, relacionados }: { producto: Product
         <section aria-labelledby="titulo-relacionados" className="border-b border-filete">
           <div className="mx-auto max-w-[1280px] px-4 py-16 md:px-8 md:py-24">
             <h2 id="titulo-relacionados" className="cond text-4xl leading-none md:text-6xl">
-              {OTROS[p.categoria]}
+              Más en {p.categoria.nombre}
             </h2>
             <ul className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
               {relacionados.map((r) => (

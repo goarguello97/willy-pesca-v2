@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  NOMBRE_CATEGORIA,
   formatearPrecio,
   fotoPrincipal,
   imagen,
@@ -57,8 +56,8 @@ export function Vitrina({ productos }: { productos: Producto[] }) {
             >
               Consultá stock
             </a>
-            <a href="#comparador" className="enlace-comparar">
-              Comparar equipos
+            <a href="#catalogo" className="enlace-comparar">
+              Ver el catálogo
             </a>
           </div>
         </div>
@@ -122,7 +121,7 @@ function Escena({
               {tituloProducto(p)}
             </Link>
             <span className="shrink-0 font-dpmono text-xs text-cobalto">
-              {NOMBRE_CATEGORIA[p.categoria]} · {String(actual + 1).padStart(2, "0")}/
+              {p.categoria.singular ?? p.categoria.nombre} · {String(actual + 1).padStart(2, "0")}/
               {String(productos.length).padStart(2, "0")}
             </span>
           </figcaption>

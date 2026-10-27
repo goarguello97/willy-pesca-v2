@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import type { Menu } from "../../lib/catalogo.functions";
 import { imagen, srcsetImagen } from "./catalogo";
 import {
   ENLACE_COMO_LLEGAR,
@@ -14,14 +15,14 @@ import { Flecha, GlifoInstagram, GlifoWhatsapp } from "./marca";
 // Crédito de diseño del sitio.
 const LINKEDIN_AUTOR = "https://www.linkedin.com/in/gonzalo-arg%C3%BCello/";
 
-const ANCLAS = [
-  { href: "/#comparador", texto: "Equipos" },
-  { href: "/#camping", texto: "Camping" },
+// Una entrada por categoría madre con productos (secciones de la portada).
+const anclas = (menu: Menu) => [
+  ...menu.map((m) => ({ href: `/#${m.slug}`, texto: m.nombre })),
   { href: "/#como-comprar", texto: "Cómo comprar" },
   { href: "/#ubicacion", texto: "Ubicación" },
 ];
 
-export function Encabezado() {
+export function Encabezado({ menu }: { menu: Menu }) {
   return (
     <header className="sticky top-0 z-40 bg-tinta text-white">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-6 px-4 md:px-8">
@@ -40,7 +41,7 @@ export function Encabezado() {
         </a>
         <nav aria-label="Secciones" className="hidden lg:block">
           <ul className="flex gap-9 text-[15px] font-medium">
-            {ANCLAS.map((a) => (
+            {anclas(menu).map((a) => (
               <li key={a.href}>
                 <a href={a.href} className="ancla-dp">
                   {a.texto}
@@ -159,7 +160,7 @@ function Mapa() {
   );
 }
 
-export function Pie() {
+export function Pie({ menu }: { menu: Menu }) {
   return (
     <footer className="pie-dp bg-tinta text-white">
       <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 pb-10 pt-16 text-center md:px-8 md:pt-20">
@@ -179,7 +180,7 @@ export function Pie() {
 
         <nav aria-label="Secciones del pie" className="mt-10">
           <ul className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-[15px]">
-            {ANCLAS.map((a) => (
+            {anclas(menu).map((a) => (
               <li key={a.href}>
                 <a href={a.href}>{a.texto}</a>
               </li>

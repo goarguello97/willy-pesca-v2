@@ -1,16 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  NOMBRE_CATEGORIA,
   SELECT_PRODUCTO,
-  desdeFila,
+  desdeFilas,
   formatearPrecio,
   fotoPrincipal,
   ordenarCatalogo,
+  rutaCategoria,
   tituloProducto,
   type FilaProducto,
   type Producto,
 } from "../dp/catalogo";
+import { leerCategorias } from "./categorias";
 import { borrarArchivos } from "./imagenes";
 import { useSesion } from "./sesion";
 
@@ -26,14 +27,13 @@ export function ListaProductos() {
 
   useEffect(() => {
     let vivo = true;
-    sb.from("productos")
-      .select(SELECT_PRODUCTO)
-      .returns<FilaProducto[]>()
-      .then(({ data, error: e }) => {
+    Promise.all([leerCategorias(sb), sb.from("productos").select(SELECT_PRODUCTO).returns<FilaProducto[]>()])
+      .then(([categorias, { data, error: e }]) => {
         if (!vivo) return;
-        if (e) setError(`No se pudo cargar el catálogo: ${e.message}`);
-        else setProductos(ordenarCatalogo(data.map(desdeFila)));
-      });
+        if (e) throw new Error(e.message);
+        setProductos(ordenarCatalogo(desdeFilas(data, categorias)));
+      })
+      .catch((e: Error) => vivo && setError(`No se pudo cargar el catálogo: ${e.message}`));
     return () => {
       vivo = false;
     };
@@ -44,7 +44,7 @@ export function ListaProductos() {
     return (productos ?? []).filter(
       (p) =>
         (filtro === "todos" || (filtro === "publicados" ? p.publicado : !p.publicado)) &&
-        (!q || tituloProducto(p).toLowerCase().includes(q)),
+        (!q || `${tituloProducto(p)} ${rutaCategoria(p)}`.toLowerCase().includes(q)),
     );
   }, [productos, filtro, busqueda]);
 
@@ -108,7 +108,7 @@ export function ListaProductos() {
           type="search"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          placeholder="Buscar por marca o nombre"
+          placeholder="Buscar por marca, nombre o categoría"
           className="campo-dp max-w-[280px]"
         />
       </div>
@@ -143,7 +143,7 @@ export function ListaProductos() {
               <div className="min-w-0">
                 <p className="truncate text-lg font-semibold">{tituloProducto(p)}</p>
                 <p className="font-dpmono text-xs text-gris">
-                  {NOMBRE_CATEGORIA[p.categoria]} · {formatearPrecio(p.precio) ?? "sin precio"} ·{" "}
+                  {rutaCategoria(p)} · {formatearPrecio(p.precio) ?? "sin precio"} ·{" "}
                   {p.imagenes.length} {p.imagenes.length === 1 ? "foto" : "fotos"}
                 </p>
               </div>
